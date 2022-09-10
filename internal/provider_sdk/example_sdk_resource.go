@@ -2,6 +2,7 @@ package provider_sdk
 
 import (
 	"context"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -9,10 +10,9 @@ import (
 
 func exampleSdkResource() *schema.Resource {
 	return &schema.Resource{
-		//// Timeouts
-		//Timeouts: &schema.ResourceTimeout{
-		//	Create: schema.DefaultTimeout(45 * time.Minute),
-		//},
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(45 * time.Minute),
+		},
 
 		CreateContext: create,
 		ReadContext:   read,

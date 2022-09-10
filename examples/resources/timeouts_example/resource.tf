@@ -8,4 +8,8 @@ terraform {
 
 resource "timeouts_example" "example" {
   configurable_attribute = "some-value"
+
+  timeouts {
+    create = "60m"
+  }
 }

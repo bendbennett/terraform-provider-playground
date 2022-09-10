@@ -21,7 +21,7 @@ func (p *playgroundProvider) Configure(ctx context.Context, req provider.Configu
 
 func (p *playgroundProvider) GetResources(ctx context.Context) (map[string]provider.ResourceType, diag.Diagnostics) {
 	return map[string]provider.ResourceType{
-		"timeouts_example": exampleResourceType{},
+		//"timeouts_example": exampleResourceType{},
 	}, nil
 }
 

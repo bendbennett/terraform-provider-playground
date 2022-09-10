@@ -7,7 +7,7 @@ import (
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		ResourcesMap: map[string]*schema.Resource{
-			//"timeouts_example": exampleSdkResource(),
+			"timeouts_example": exampleSdkResource(),
 		},
 	}
 }
