@@ -31,8 +31,6 @@ func (p *playgroundProvider) GetDataSources(ctx context.Context) (map[string]pro
 	}, nil
 }
 
-func New() func() provider.Provider {
-	return func() provider.Provider {
-		return &playgroundProvider{}
-	}
+func New() *playgroundProvider {
+	return &playgroundProvider{}
 }
