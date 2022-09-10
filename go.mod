@@ -1,4 +1,4 @@
-module github.com/hashicorp/terraform-provider-scaffolding-framework
+module github.com/bendbennett/terraform-provider-attributes
 
 go 1.18
 
