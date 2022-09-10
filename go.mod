@@ -1,4 +1,4 @@
-module github.com/bendbennett/terraform-provider-attributes
+module github.com/bendbennett/terraform-provider-timeouts
 
 go 1.18
 

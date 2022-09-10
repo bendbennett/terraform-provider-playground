@@ -38,11 +38,7 @@ func (t exampleDataSourceType) GetSchema(ctx context.Context) (tfsdk.Schema, dia
 }
 
 func (t exampleDataSourceType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
-
-	return exampleDataSource{
-		provider: provider,
-	}, diags
+	return exampleDataSource{}, nil
 }
 
 type exampleDataSourceData struct {
@@ -51,7 +47,7 @@ type exampleDataSourceData struct {
 }
 
 type exampleDataSource struct {
-	provider scaffoldingProvider
+	provider playgroundProvider
 }
 
 func (d exampleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {

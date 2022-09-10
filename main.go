@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 
-	"github.com/bendbennett/terraform-provider-attributes/internal/provider"
+	"github.com/bendbennett/terraform-provider-timeouts/internal/provider"
 )
 
 // Run "go generate" to format example terraform files and generate the docs for the registry/website
@@ -20,15 +20,6 @@ import (
 // can be customized.
 //go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 
-var (
-	// these will be set by the goreleaser configuration
-	// to appropriate values for the compiled binary
-	version string = "dev"
-
-	// goreleaser can also pass the specific commit if you want
-	// commit  string = ""
-)
-
 func main() {
 	var debug bool
 
@@ -36,11 +27,11 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/bendbennett/attributes",
+		Address: "registry.terraform.io/bendbennett/timeouts",
 		Debug:   debug,
 	}
 
-	err := providerserver.Serve(context.Background(), provider.New(version), opts)
+	err := providerserver.Serve(context.Background(), provider.New(), opts)
 
 	if err != nil {
 		log.Fatal(err.Error())
