@@ -12,6 +12,7 @@ func exampleSdkResource() *schema.Resource {
 	return &schema.Resource{
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(45 * time.Minute),
+			Read:   schema.DefaultTimeout(45 * time.Minute),
 		},
 
 		CreateContext: create,

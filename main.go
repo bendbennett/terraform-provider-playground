@@ -56,4 +56,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// SDKv2 only
+	//plugin.Serve(&plugin.ServeOpts{
+	//	ProviderFunc: provider_sdk.Provider,
+	//	Debug:        true,
+	//	ProviderAddr: "registry.terraform.io/bendbennett/timeouts",
+	//})
+
+	// Framework only
+	//err := providerserver.Serve(context.Background(), provider.New, providerserver.ServeOpts{
+	//	Address: "registry.terraform.io/bendbennett/timeouts",
+	//	Debug:   debug,
+	//})
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 }
