@@ -36,9 +36,9 @@ func (t *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 				},
 				Type: types.StringType,
 			},
-			"timeouts": timeouts.Attributes(ctx, timeouts.Opts{
-				Create: true,
-			}),
+			//"timeouts": timeouts.Attributes(ctx, timeouts.Opts{
+			//	Create: true,
+			//}),
 		},
 
 		Blocks: map[string]tfsdk.Block{
