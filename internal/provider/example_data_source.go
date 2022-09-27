@@ -273,15 +273,15 @@ type exampleDataSourceData struct {
 	StringAttribute  types.String  `tfsdk:"string_attribute"`
 
 	// Nested Attributes
-	ListNestedAttribute   []types.Object          `tfsdk:"list_nested_attribute"`
-	MapNestedAttribute    map[string]types.Object `tfsdk:"map_nested_attribute"`
-	SetNestedAttribute    []types.Object          `tfsdk:"set_nested_attribute"`
-	SingleNestedAttribute types.Object            `tfsdk:"single_nested_attribute"`
+	ListNestedAttribute   types.List   `tfsdk:"list_nested_attribute"`
+	MapNestedAttribute    types.Map    `tfsdk:"map_nested_attribute"`
+	SetNestedAttribute    types.Set    `tfsdk:"set_nested_attribute"`
+	SingleNestedAttribute types.Object `tfsdk:"single_nested_attribute"`
 
 	// Nested Blocks
-	ListNestedBlock   []types.Object `tfsdk:"list_nested_block"`
-	SetNestedBlock    []types.Object `tfsdk:"set_nested_block"`
-	SingleNestedBlock types.Object   `tfsdk:"single_nested_block"`
+	ListNestedBlock   types.List   `tfsdk:"list_nested_block"`
+	SetNestedBlock    types.Set    `tfsdk:"set_nested_block"`
+	SingleNestedBlock types.Object `tfsdk:"single_nested_block"`
 }
 
 func (e *exampleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
