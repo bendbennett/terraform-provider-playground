@@ -45,18 +45,9 @@ func (t *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 			"timeouts": timeouts.Block(ctx, timeouts.Opts{
 				Create: true,
 				Read:   true,
+				Update: true,
 			}),
 		},
-
-		//Blocks: map[string]tfsdk.Block{
-		//	"timeouts": libraryCall()
-		// only support Read
-		// support All / CRUD timeouts block
-		// type that defines how timeouts data is read out into model
-		// helper(s) - defaults - can we do this?
-		//
-		// in Read function, try to read from single location, if not found provide default
-		//},
 	}, nil
 }
 
@@ -64,62 +55,11 @@ func NewResource() resource.Resource {
 	return &exampleResource{}
 }
 
-type TimeoutsType struct {
-	types.Object
-}
-
 type exampleResourceData struct {
-	ConfigurableAttribute types.String `tfsdk:"configurable_attribute"`
-	Id                    types.String `tfsdk:"id"`
-	Timeouts              types.Object `tfsdk:"timeouts"`
-	//Timeouts              TimeoutsType `tfsdk:"timeouts"`
-}
-
-type Duration interface {
-	GetDuration(ctx context.Context, op string) (*time.Duration, diag.Diagnostics)
-}
-
-type TimeoutsCreateReadStruct struct {
-	Create types.String `tfsdk:"create"`
-	Read   types.String `tfsdk:"read"`
-}
-
-func (t TimeoutsCreateReadStruct) GetDuration(ctx context.Context, op string) (*time.Duration, diag.Diagnostics) {
-	var durationToParse string
-	var diags diag.Diagnostics
-
-	switch op {
-	case "create":
-		if t.Create.IsNull() || t.Create.IsUnknown() {
-			diags.AddError("", "")
-			return nil, diags
-		}
-
-		if t.Create.Value == "" {
-			diags.AddError("", "")
-			return nil, diags
-		}
-
-		durationToParse = t.Create.Value
-	}
-
-	dur, err := time.ParseDuration(durationToParse)
-	if err != nil {
-		diags.AddError("", "")
-		return nil, diags
-	}
-
-	return &dur, nil
-}
-
-func (t TimeoutsCreateReadStruct) GetDurationDefault(ctx context.Context, op string, def time.Duration) *time.Duration {
-	dur, diags := t.GetDuration(ctx, op)
-
-	if diags.HasError() {
-		return dur
-	}
-
-	return dur
+	ConfigurableAttribute types.String      `tfsdk:"configurable_attribute"`
+	Id                    types.String      `tfsdk:"id"`
+	Timeouts              timeouts.Timeouts `tfsdk:"timeouts"`
+	//Timeouts              types.Object `tfsdk:"timeouts"`
 }
 
 type exampleResource struct {
@@ -140,16 +80,11 @@ func (r exampleResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	d, diags := timeouts.Create(ctx, data.Timeouts)
+	createTimeout := data.Timeouts.Create(ctx, time.Minute*20)
+	fmt.Println(createTimeout)
 
-	fmt.Println(d)
-
-	context.WithTimeout(ctx, *d)
-	//dur, diags := data.TimeoutsCreateReadStruct.GetDuration(ctx, "create")
-	//fmt.Println(dur)
-
-	//createTimeout := CreateTimeout(ctx, data.Timeouts, 20*time.Minute)
-	//fmt.Println(createTimeout)
+	_, cancel := context.WithTimeout(ctx, createTimeout)
+	defer cancel()
 
 	data.Id = types.String{Value: "example-id"}
 
@@ -157,25 +92,6 @@ func (r exampleResource) Create(ctx context.Context, req resource.CreateRequest,
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
-}
-
-func CreateTimeout(ctx context.Context, timeouts types.Object, def time.Duration) time.Duration {
-	if _, ok := timeouts.Attrs["create"]; !ok {
-		return def
-	}
-
-	readTimeout := timeouts.Attrs["create"]
-
-	if _, ok := readTimeout.(types.String); !ok {
-		return def
-	}
-
-	duration, err := time.ParseDuration(readTimeout.(types.String).Value)
-	if err != nil {
-		return def
-	}
-
-	return duration
 }
 
 func (r exampleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
