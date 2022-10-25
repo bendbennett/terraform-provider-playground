@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/hashicorp/terraform-plugin-docs v0.13.0
-	github.com/hashicorp/terraform-plugin-framework v0.13.1-0.20221004151657-cd629b1420d0
+	github.com/hashicorp/terraform-plugin-framework v0.14.1-0.20221005122614-25ef9db48fcf
 	github.com/hashicorp/terraform-plugin-framework-timeouts v0.1.1-0.20221004152313-67bfc695cff0
 	github.com/hashicorp/terraform-plugin-go v0.14.0
 	github.com/hashicorp/terraform-plugin-log v0.7.0
@@ -70,3 +70,7 @@ require (
 	google.golang.org/grpc v1.48.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
+
+replace github.com/hashicorp/terraform-plugin-framework => /Users/bdb/go/src/github/hashicorp/terraform-plugin-framework
+
+replace github.com/hashicorp/terraform-plugin-framework-timeouts => /Users/bdb/go/src/github/hashicorp/terraform-plugin-framework-timeouts

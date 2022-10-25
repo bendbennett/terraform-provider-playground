@@ -17,7 +17,7 @@ import (
 var _ resource.Resource = (*exampleResource)(nil)
 var _ resource.ResourceWithImportState = (*exampleResource)(nil)
 
-func (t *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (r *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Example resource",
@@ -70,10 +70,10 @@ func (r *exampleResource) Metadata(_ context.Context, req resource.MetadataReque
 	resp.TypeName = req.ProviderTypeName + "_example"
 }
 
-func (r exampleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+func (r *exampleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data exampleResourceData
 
-	diags := req.Config.Get(ctx, &data)
+	diags := req.Plan.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
 
 	if resp.Diagnostics.HasError() {
@@ -94,7 +94,7 @@ func (r exampleResource) Create(ctx context.Context, req resource.CreateRequest,
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r exampleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+func (r *exampleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data exampleResourceData
 
 	diags := req.State.Get(ctx, &data)
@@ -110,7 +110,7 @@ func (r exampleResource) Read(ctx context.Context, req resource.ReadRequest, res
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r exampleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+func (r *exampleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data exampleResourceData
 
 	diags := req.Plan.Get(ctx, &data)
@@ -124,7 +124,7 @@ func (r exampleResource) Update(ctx context.Context, req resource.UpdateRequest,
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r exampleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *exampleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data exampleResourceData
 
 	diags := req.State.Get(ctx, &data)
@@ -135,6 +135,6 @@ func (r exampleResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	}
 }
 
-func (r exampleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *exampleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

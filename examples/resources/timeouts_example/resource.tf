@@ -13,10 +13,10 @@ resource "timeouts_example" "example" {
   timeouts {
     create = "60m"
     read = "30m"
-    update = "7m"
+    update = "12m"
   }
 
-#  Attributes
+##  Attributes
 #  timeouts = {
 #    create = "60m"
 #    read = "30m"
