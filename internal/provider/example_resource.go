@@ -8,6 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 var _ resource.Resource = (*exampleResource)(nil)
@@ -24,6 +26,17 @@ func (e *exampleResource) Metadata(_ context.Context, req resource.MetadataReque
 }
 
 func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+	listNestedAttributes := tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+		"int64_attribute": {
+			Optional: true,
+			Type:     types.Int64Type,
+		},
+		//	"list_attribute": {
+		//		Optional: true,
+		//		Type:     types.ListType{ElemType: types.StringType},
+		//	},
+	})
+
 	return tfsdk.Schema{
 		Attributes: map[string]tfsdk.Attribute{
 			"id": {
@@ -34,270 +47,121 @@ func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 				Type: types.StringType,
 			},
 
-			// Simple/primitive attributes
-			"bool_attribute": {
+			//"list_nested_attribute": {
+			//	Optional: true,
+			//	Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+			//		"int64_attribute": {
+			//			Optional: true,
+			//			Type:     types.Int64Type,
+			//		},
+			//		//"list_attribute": {
+			//		//	Optional: true,
+			//		//	Type:     types.ListType{ElemType: types.StringType},
+			//		//},
+			//	}),
+			//},
+
+			"list_nested_attribute_custom": {
 				Optional: true,
-				Type:     types.BoolType,
-			},
-
-			"float64_attribute": {
-				Optional: true,
-				Type:     types.Float64Type,
-			},
-
-			"int64_attribute": {
-				Optional: true,
-				Type:     types.Int64Type,
-			},
-
-			"list_attribute": {
-				Optional: true,
-				Type:     types.ListType{ElemType: types.StringType},
-			},
-
-			"map_attribute": {
-				Optional: true,
-				Type:     types.MapType{ElemType: types.StringType},
-			},
-
-			"number_attribute": {
-				Optional: true,
-				Type:     types.NumberType,
-			},
-
-			"object_attribute": {
-				Optional: true,
-				Type: types.ObjectType{
-					AttrTypes: map[string]attr.Type{
-						"bool_attribute":    types.BoolType,
-						"float64_attribute": types.Float64Type,
-						"int64_attribute":   types.Int64Type,
-						"list_attribute":    types.ListType{ElemType: types.StringType},
-						"map_attribute":     types.MapType{ElemType: types.StringType},
-						"number_attribute":  types.NumberType,
-						"set_attribute":     types.ListType{ElemType: types.StringType},
-						"string_attribute":  types.StringType,
-					},
-				},
-			},
-
-			"set_attribute": {
-				Optional: true,
-				Type:     types.SetType{ElemType: types.StringType},
-			},
-
-			"string_attribute": {
-				Optional: true,
-				Type:     types.StringType,
-			},
-
-			// Nested Attributes
-			"list_nested_attribute": {
-				Optional: true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"int64_attribute": {
-						Optional: true,
-						Type:     types.Int64Type,
-					},
-					"list_attribute": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
-				}),
-			},
-
-			"map_nested_attribute": {
-				Optional: true,
-				Attributes: tfsdk.MapNestedAttributes(map[string]tfsdk.Attribute{
-					"map_attribute": {
-						Optional: true,
-						Type:     types.MapType{ElemType: types.StringType},
-					},
-					"number_attribute": {
-						Optional: true,
-						Type:     types.NumberType,
-					},
-				}),
-			},
-
-			"set_nested_attribute": {
-				Optional: true,
-				Attributes: tfsdk.SetNestedAttributes(map[string]tfsdk.Attribute{
-					"object_attribute": {
-						Optional: true,
-						Type: types.ObjectType{
-							AttrTypes: map[string]attr.Type{
-								"bool_attribute":    types.BoolType,
-								"float64_attribute": types.Float64Type,
-								"int64_attribute":   types.Int64Type,
-								"list_attribute":    types.ListType{ElemType: types.StringType},
-								"map_attribute":     types.MapType{ElemType: types.StringType},
-								"number_attribute":  types.NumberType,
-								"set_attribute":     types.ListType{ElemType: types.StringType},
-								"string_attribute":  types.StringType,
-							},
-						},
-					},
-					"set_attribute": {
-						Optional: true,
-						Type:     types.SetType{ElemType: types.StringType},
-					},
-					"string_attribute": {
-						Optional: true,
-						Type:     types.StringType,
-					},
-				}),
-			},
-
-			"single_nested_attribute": {
-				Optional: true,
-				Computed: true,
-				Attributes: tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
-					"bool_attribute": {
-						Optional: true,
-						Type:     types.BoolType,
-					},
-					"float64_attribute": {
-						Optional: true,
-						Type:     types.Float64Type,
-					},
-				}),
-			},
-		},
-
-		// Nested Blocks
-		Blocks: map[string]tfsdk.Block{
-			"list_nested_block": {
-				NestingMode: tfsdk.BlockNestingModeList,
-				Attributes: map[string]tfsdk.Attribute{
-					"bool_attribute": {
-						Optional: true,
-						Type:     types.BoolType,
-					},
-					"float64_attribute": {
-						Optional: true,
-						Type:     types.Float64Type,
-					},
-
-					"int64_attribute": {
-						Optional: true,
-						Type:     types.Int64Type,
-					},
-					"list_attribute": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
-				},
-				Blocks: map[string]tfsdk.Block{
-					"list_nested_nested_block": {
-						NestingMode: tfsdk.BlockNestingModeList,
-						Attributes: map[string]tfsdk.Attribute{
-							"bool_attribute": {
-								Optional: true,
-								Type:     types.BoolType,
-							},
-						},
-					},
-				},
-			},
-
-			"set_nested_block": {
-				NestingMode: tfsdk.BlockNestingModeSet,
-				Attributes: map[string]tfsdk.Attribute{
-					"map_attribute": {
-						Optional: true,
-						Type:     types.MapType{ElemType: types.StringType},
-					},
-					"number_attribute": {
-						Optional: true,
-						Type:     types.NumberType,
-					},
-					"object_attribute": {
-						Optional: true,
-						Type: types.ObjectType{
-							AttrTypes: map[string]attr.Type{
-								"bool_attribute":    types.BoolType,
-								"float64_attribute": types.Float64Type,
-								"int64_attribute":   types.Int64Type,
-								"list_attribute":    types.ListType{ElemType: types.StringType},
-								"map_attribute":     types.MapType{ElemType: types.StringType},
-								"number_attribute":  types.NumberType,
-								"set_attribute":     types.ListType{ElemType: types.StringType},
-								"string_attribute":  types.StringType,
-							},
-						},
-					},
-					"set_attribute": {
-						Optional: true,
-						Type:     types.SetType{ElemType: types.StringType},
-					},
-				},
-				Blocks: map[string]tfsdk.Block{
-					"set_nested_nested_block": {
-						NestingMode: tfsdk.BlockNestingModeSet,
-						Attributes: map[string]tfsdk.Attribute{
-							"bool_attribute": {
-								Optional: true,
-								Type:     types.BoolType,
-							},
-						},
-					},
-				},
-			},
-
-			"single_nested_block": {
-				NestingMode: tfsdk.BlockNestingModeSingle,
-				Attributes: map[string]tfsdk.Attribute{
-					"bool_attribute": {
-						Optional: true,
-						Type:     types.BoolType,
-					},
-					"float64_attribute": {
-						Optional: true,
-						Type:     types.Float64Type,
-					},
+				Attributes: ListNestedAttributesCustomType{
+					listNestedAttributes,
 				},
 			},
 		},
 	}, nil
 }
 
+type ListNestedAttributesCustomType struct {
+	types.NestedAttributes
+}
+
+type ListNestedAttributesCustomTypeType struct {
+	attr.Type
+}
+
+//func (l ListNestedAttributesCustomTypeType) TerraformType(ctx context.Context) tftypes.Type {
+//	//TODO implement me
+//	panic("TerraformType")
+//}
+
+func (l ListNestedAttributesCustomTypeType) ValueFromTerraform(ctx context.Context, value tftypes.Value) (attr.Value, error) {
+	val, err := l.Type.ValueFromTerraform(ctx, value)
+	if err != nil {
+		return nil, err
+	}
+
+	return ListNestedAttributesCustomValue{
+		val.(types.List),
+	}, nil
+}
+
+func (l ListNestedAttributesCustomTypeType) ValueType(ctx context.Context) attr.Value {
+	//TODO implement me
+	panic("ValueType")
+}
+
+func (l ListNestedAttributesCustomTypeType) Equal(t attr.Type) bool {
+	//TODO implement me
+	panic("Equal")
+}
+
+func (l ListNestedAttributesCustomTypeType) String() string {
+	//TODO implement me
+	panic("String")
+}
+
+func (l ListNestedAttributesCustomTypeType) ApplyTerraform5AttributePathStep(step tftypes.AttributePathStep) (interface{}, error) {
+	//TODO implement me
+	panic("ApplyTerraform5AttributePathStep")
+}
+
+func (lnact ListNestedAttributesCustomType) Type() attr.Type {
+	return ListNestedAttributesCustomTypeType{
+		lnact.NestedAttributes.Type(),
+	}
+}
+
+//types.SetType{
+//	ElemType: types.ObjectType{
+//		AttrTypes: map[string]attr.Type{
+//			"int64_attribute": types.Int64Type,
+//		},
+//	},
+//},
+
+type ListNestedAttributesCustomValue struct {
+	types.List
+}
+
+//func (lnacv ListNestedAttributesCustomValue) Type(_ context.Context) attr.Type {
+//	panic("here")
+//}
+
+func (lnacv ListNestedAttributesCustomValue) CustomFunc(ctx context.Context) {
+	tflog.Info(ctx, "calling CustomFunc")
+}
+
 type exampleResourceData struct {
 	Id types.String `tfsdk:"id"`
 
-	// Simple/primitive attributes
-	BoolAttribute    types.Bool    `tfsdk:"bool_attribute"`
-	Float64Attribute types.Float64 `tfsdk:"float64_attribute"`
-	Int64Attribute   types.Int64   `tfsdk:"int64_attribute"`
-	ListAttribute    types.List    `tfsdk:"list_attribute"`
-	MapAttribute     types.Map     `tfsdk:"map_attribute"`
-	NumberAttribute  types.Number  `tfsdk:"number_attribute"`
-	ObjectAttribute  types.Object  `tfsdk:"object_attribute"`
-	SetAttribute     types.Set     `tfsdk:"set_attribute"`
-	StringAttribute  types.String  `tfsdk:"string_attribute"`
+	//ListNestedAttribute types.List `tfsdk:"list_nested_attribute"`
 
-	// Nested Attributes
-	ListNestedAttribute   types.List   `tfsdk:"list_nested_attribute"`
-	MapNestedAttribute    types.Map    `tfsdk:"map_nested_attribute"`
-	SetNestedAttribute    types.Set    `tfsdk:"set_nested_attribute"`
-	SingleNestedAttribute types.Object `tfsdk:"single_nested_attribute"`
-
-	// Nested Blocks
-	ListNestedBlock   types.List   `tfsdk:"list_nested_block"`
-	SetNestedBlock    types.Set    `tfsdk:"set_nested_block"`
-	SingleNestedBlock types.Object `tfsdk:"single_nested_block"`
+	ListNestedAttributeCustom ListNestedAttributesCustomValue `tfsdk:"list_nested_attribute_custom"`
+	//ListNestedAttributeCustom types.List `tfsdk:"list_nested_attribute_custom"`
 }
 
 // Create is unmarshalling the config onto exampleResourceData and persisting to the state.
 func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data exampleResourceData
 
-	diags := req.Config.Get(ctx, &data)
+	diags := req.Plan.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ListNestedAttributeCustom.CustomFunc(ctx)
 
 	data.Id = types.String{Value: "example-id"}
 
