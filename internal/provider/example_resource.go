@@ -31,10 +31,10 @@ func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 			Optional: true,
 			Type:     types.Int64Type,
 		},
-		//	"list_attribute": {
-		//		Optional: true,
-		//		Type:     types.ListType{ElemType: types.StringType},
-		//	},
+		"list_attribute": {
+			Optional: true,
+			Type:     types.ListType{ElemType: types.StringType},
+		},
 	})
 
 	return tfsdk.Schema{
@@ -47,19 +47,19 @@ func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 				Type: types.StringType,
 			},
 
-			//"list_nested_attribute": {
-			//	Optional: true,
-			//	Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-			//		"int64_attribute": {
-			//			Optional: true,
-			//			Type:     types.Int64Type,
-			//		},
-			//		//"list_attribute": {
-			//		//	Optional: true,
-			//		//	Type:     types.ListType{ElemType: types.StringType},
-			//		//},
-			//	}),
-			//},
+			"list_nested_attribute": {
+				Optional: true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"int64_attribute": {
+						Optional: true,
+						Type:     types.Int64Type,
+					},
+					"list_attribute": {
+						Optional: true,
+						Type:     types.ListType{ElemType: types.StringType},
+					},
+				}),
+			},
 
 			"list_nested_attribute_custom": {
 				Optional: true,
@@ -75,14 +75,15 @@ type ListNestedAttributesCustomType struct {
 	types.NestedAttributes
 }
 
+func (lnact ListNestedAttributesCustomType) Type() attr.Type {
+	return ListNestedAttributesCustomTypeType{
+		lnact.NestedAttributes.Type(),
+	}
+}
+
 type ListNestedAttributesCustomTypeType struct {
 	attr.Type
 }
-
-//func (l ListNestedAttributesCustomTypeType) TerraformType(ctx context.Context) tftypes.Type {
-//	//TODO implement me
-//	panic("TerraformType")
-//}
 
 func (l ListNestedAttributesCustomTypeType) ValueFromTerraform(ctx context.Context, value tftypes.Value) (attr.Value, error) {
 	val, err := l.Type.ValueFromTerraform(ctx, value)
@@ -93,6 +94,24 @@ func (l ListNestedAttributesCustomTypeType) ValueFromTerraform(ctx context.Conte
 	return ListNestedAttributesCustomValue{
 		val.(types.List),
 	}, nil
+}
+
+type ListNestedAttributesCustomValue struct {
+	types.List
+}
+
+func (l ListNestedAttributesCustomValue) ToFrameworkValue() attr.Value {
+	return l.List
+}
+
+func (l ListNestedAttributesCustomValue) CustomFunc(ctx context.Context) {
+	tflog.Info(ctx, "calling CustomFunc")
+}
+
+/*
+func (l ListNestedAttributesCustomTypeType) TerraformType(ctx context.Context) tftypes.Type {
+	//TODO implement me
+	panic("TerraformType")
 }
 
 func (l ListNestedAttributesCustomTypeType) ValueType(ctx context.Context) attr.Value {
@@ -114,40 +133,14 @@ func (l ListNestedAttributesCustomTypeType) ApplyTerraform5AttributePathStep(ste
 	//TODO implement me
 	panic("ApplyTerraform5AttributePathStep")
 }
-
-func (lnact ListNestedAttributesCustomType) Type() attr.Type {
-	return ListNestedAttributesCustomTypeType{
-		lnact.NestedAttributes.Type(),
-	}
-}
-
-//types.SetType{
-//	ElemType: types.ObjectType{
-//		AttrTypes: map[string]attr.Type{
-//			"int64_attribute": types.Int64Type,
-//		},
-//	},
-//},
-
-type ListNestedAttributesCustomValue struct {
-	types.List
-}
-
-//func (lnacv ListNestedAttributesCustomValue) Type(_ context.Context) attr.Type {
-//	panic("here")
-//}
-
-func (lnacv ListNestedAttributesCustomValue) CustomFunc(ctx context.Context) {
-	tflog.Info(ctx, "calling CustomFunc")
-}
+*/
 
 type exampleResourceData struct {
 	Id types.String `tfsdk:"id"`
 
-	//ListNestedAttribute types.List `tfsdk:"list_nested_attribute"`
+	ListNestedAttribute types.List `tfsdk:"list_nested_attribute"`
 
 	ListNestedAttributeCustom ListNestedAttributesCustomValue `tfsdk:"list_nested_attribute_custom"`
-	//ListNestedAttributeCustom types.List `tfsdk:"list_nested_attribute_custom"`
 }
 
 // Create is unmarshalling the config onto exampleResourceData and persisting to the state.
