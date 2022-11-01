@@ -174,6 +174,25 @@ func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 				},
 				NestingMode: tfsdk.BlockNestingModeSingle,
 			},
+
+			"single_nested_block_custom": {
+				Typ: SingleNestedBlockCustomType{},
+				Attributes: map[string]tfsdk.Attribute{
+					"first": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"second": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"third": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+				},
+				NestingMode: tfsdk.BlockNestingModeSingle,
+			},
 		},
 	}, nil
 }
@@ -200,6 +219,8 @@ type exampleResourceData struct {
 
 	// Nested Blocks
 	SingleNestedBlock types.Object `tfsdk:"single_nested_block"`
+
+	SingleNestedBlockCustom SingleNestedBlockCustomValue `tfsdk:"single_nested_block_custom"`
 }
 
 // Create is unmarshalling the config onto exampleResourceData and persisting to the state.
@@ -400,4 +421,78 @@ func (l SingleNestedAttributesCustomValue) ToFrameworkValue() attr.Value {
 
 func (l SingleNestedAttributesCustomValue) CustomFunc(ctx context.Context) {
 	tflog.Info(ctx, "calling CustomFunc on custom single nested attribute")
+}
+
+// SingleNestedBlockCustomType for experimentation
+type SingleNestedBlockCustomType struct {
+	types.ObjectType
+}
+
+func (t SingleNestedBlockCustomType) WithAttributeTypes(typs map[string]attr.Type) attr.TypeWithAttributeTypes {
+	return SingleNestedBlockCustomType{
+		types.ObjectType{
+			AttrTypes: typs,
+		},
+	}
+}
+
+func (t SingleNestedBlockCustomType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
+	obj, err := t.ObjectType.ValueFromTerraform(ctx, in)
+	if err != nil {
+		return nil, err
+	}
+
+	return SingleNestedBlockCustomValue{
+		obj.(types.Object),
+	}, nil
+}
+
+func (t SingleNestedBlockCustomType) Equal(candidate attr.Type) bool {
+	_, ok := candidate.(SingleNestedBlockCustomType)
+	if !ok {
+		return false
+	}
+
+	return t.ObjectType.Equal(candidate.(SingleNestedBlockCustomType).ObjectType)
+}
+
+//// String returns a human-friendly description of the ObjectType.
+//func (t SingleNestedBlockCustomType) String() string {
+//	t.ObjectType.String()
+//	return strings.Replace(t.ObjectType.String(), "types.ObjectType[", "SingleNestedBlockCustomValue.SingleNestedBlockCustomType[", 1)
+//}
+
+func (t SingleNestedBlockCustomType) ValueType(_ context.Context) attr.Value {
+	return SingleNestedBlockCustomValue{
+		types.Object{
+			AttrTypes: t.AttrTypes,
+		},
+	}
+}
+
+type SingleNestedBlockCustomValue struct {
+	types.Object
+}
+
+func (t SingleNestedBlockCustomValue) Type(_ context.Context) attr.Type {
+	return SingleNestedBlockCustomType{
+		types.ObjectType{AttrTypes: t.AttrTypes},
+	}
+}
+
+func (t SingleNestedBlockCustomValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+	return t.Object.ToTerraformValue(ctx)
+}
+
+func (t SingleNestedBlockCustomValue) Equal(c attr.Value) bool {
+	_, ok := c.(SingleNestedBlockCustomValue)
+	if !ok {
+		return false
+	}
+
+	return t.Object.Equal(c)
+}
+
+func (l SingleNestedBlockCustomValue) ToFrameworkValue() attr.Value {
+	return l.Object
 }

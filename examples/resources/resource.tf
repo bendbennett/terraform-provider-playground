@@ -88,4 +88,10 @@ resource "playground_resource" "example" {
     second = "two"
     third  = "three"
   }
+
+  single_nested_block_custom {
+    first  = "one"
+    second = "two"
+    third  = "three"
+  }
 }
