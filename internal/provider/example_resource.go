@@ -26,17 +26,6 @@ func (e *exampleResource) Metadata(_ context.Context, req resource.MetadataReque
 }
 
 func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	listNestedAttributes := tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-		"int64_attribute": {
-			Optional: true,
-			Type:     types.Int64Type,
-		},
-		"list_attribute": {
-			Optional: true,
-			Type:     types.ListType{ElemType: types.StringType},
-		},
-	})
-
 	return tfsdk.Schema{
 		Attributes: map[string]tfsdk.Attribute{
 			"id": {
@@ -64,13 +53,204 @@ func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 			"list_nested_attribute_custom": {
 				Optional: true,
 				Attributes: ListNestedAttributesCustomType{
-					listNestedAttributes,
+					tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+						"int64_attribute": {
+							Optional: true,
+							Type:     types.Int64Type,
+						},
+						"list_attribute": {
+							Optional: true,
+							Type:     types.ListType{ElemType: types.StringType},
+						},
+					}),
 				},
+			},
+
+			"map_nested_attribute": {
+				Optional: true,
+				Attributes: tfsdk.MapNestedAttributes(map[string]tfsdk.Attribute{
+					"int64_attribute": {
+						Optional: true,
+						Type:     types.Int64Type,
+					},
+					"list_attribute": {
+						Optional: true,
+						Type:     types.ListType{ElemType: types.StringType},
+					},
+				}),
+			},
+
+			"map_nested_attribute_custom": {
+				Optional: true,
+				Attributes: MapNestedAttributesCustomType{
+					tfsdk.MapNestedAttributes(map[string]tfsdk.Attribute{
+						"int64_attribute": {
+							Optional: true,
+							Type:     types.Int64Type,
+						},
+						"list_attribute": {
+							Optional: true,
+							Type:     types.ListType{ElemType: types.StringType},
+						},
+					}),
+				},
+			},
+
+			"set_nested_attribute": {
+				Optional: true,
+				Attributes: tfsdk.SetNestedAttributes(map[string]tfsdk.Attribute{
+					"int64_attribute": {
+						Optional: true,
+						Type:     types.Int64Type,
+					},
+					"list_attribute": {
+						Optional: true,
+						Type:     types.ListType{ElemType: types.StringType},
+					},
+				}),
+			},
+
+			"set_nested_attribute_custom": {
+				Optional: true,
+				Attributes: SetNestedAttributesCustomType{
+					tfsdk.SetNestedAttributes(map[string]tfsdk.Attribute{
+						"int64_attribute": {
+							Optional: true,
+							Type:     types.Int64Type,
+						},
+						"list_attribute": {
+							Optional: true,
+							Type:     types.ListType{ElemType: types.StringType},
+						},
+					}),
+				},
+			},
+
+			"single_nested_attribute": {
+				Optional: true,
+				Attributes: tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
+					"int64_attribute": {
+						Optional: true,
+						Type:     types.Int64Type,
+					},
+					"list_attribute": {
+						Optional: true,
+						Type:     types.ListType{ElemType: types.StringType},
+					},
+				}),
+			},
+
+			"single_nested_attribute_custom": {
+				Optional: true,
+				Attributes: SingleNestedAttributesCustomType{
+					tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
+						"int64_attribute": {
+							Optional: true,
+							Type:     types.Int64Type,
+						},
+						"list_attribute": {
+							Optional: true,
+							Type:     types.ListType{ElemType: types.StringType},
+						},
+					}),
+				},
+			},
+		},
+		Blocks: map[string]tfsdk.Block{
+			"single_nested_block": {
+				Attributes: map[string]tfsdk.Attribute{
+					"first": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"second": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+					"third": {
+						Optional: true,
+						Type:     types.StringType,
+					},
+				},
+				NestingMode: tfsdk.BlockNestingModeSingle,
 			},
 		},
 	}, nil
 }
 
+type exampleResourceData struct {
+	Id types.String `tfsdk:"id"`
+
+	// Nested Attributes
+	ListNestedAttribute types.List `tfsdk:"list_nested_attribute"`
+
+	ListNestedAttributeCustom ListNestedAttributesCustomValue `tfsdk:"list_nested_attribute_custom"`
+
+	MapNestedAttribute types.Map `tfsdk:"map_nested_attribute"`
+
+	MapNestedAttributeCustom MapNestedAttributesCustomValue `tfsdk:"map_nested_attribute_custom"`
+
+	SetNestedAttribute types.Set `tfsdk:"set_nested_attribute"`
+
+	SetNestedAttributeCustom SetNestedAttributesCustomValue `tfsdk:"set_nested_attribute_custom"`
+
+	SingleNestedAttribute types.Object `tfsdk:"single_nested_attribute"`
+
+	SingleNestedAttributeCustom SingleNestedAttributesCustomValue `tfsdk:"single_nested_attribute_custom"`
+
+	// Nested Blocks
+	SingleNestedBlock types.Object `tfsdk:"single_nested_block"`
+}
+
+// Create is unmarshalling the config onto exampleResourceData and persisting to the state.
+func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data exampleResourceData
+
+	diags := req.Plan.Get(ctx, &data)
+	resp.Diagnostics.Append(diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ListNestedAttributeCustom.CustomFunc(ctx)
+	data.MapNestedAttributeCustom.CustomFunc(ctx)
+	data.SetNestedAttributeCustom.CustomFunc(ctx)
+	data.SingleNestedAttributeCustom.CustomFunc(ctx)
+
+	data.Id = types.String{Value: "example-id"}
+
+	diags = resp.State.Set(ctx, &data)
+	resp.Diagnostics.Append(diags...)
+}
+
+// Read is returning the contents of the state for this resource and the State field within resource.ReadResponse
+// is pre-populated so no action is required in this function.
+func (e *exampleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+}
+
+// Update overwrites the state with the plan. This is required in order that optional attributes in the config
+// are updated in place.
+func (e *exampleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data exampleResourceData
+
+	diags := req.Plan.Get(ctx, &data)
+	resp.Diagnostics.Append(diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	diags = resp.State.Set(ctx, &data)
+	resp.Diagnostics.Append(diags...)
+}
+
+// Delete is automatically handled by the Framework which sets an empty state. This function does not need to
+// be populated unless additional handling needs to be implemented over and above setting an empty state.
+func (e *exampleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+}
+
+// ListNestedAttributesCustomType for experimentation
 type ListNestedAttributesCustomType struct {
 	types.NestedAttributes
 }
@@ -105,85 +285,119 @@ func (l ListNestedAttributesCustomValue) ToFrameworkValue() attr.Value {
 }
 
 func (l ListNestedAttributesCustomValue) CustomFunc(ctx context.Context) {
-	tflog.Info(ctx, "calling CustomFunc")
+	tflog.Info(ctx, "calling CustomFunc on custom list nested attribute")
 }
 
-/*
-func (l ListNestedAttributesCustomTypeType) TerraformType(ctx context.Context) tftypes.Type {
-	//TODO implement me
-	panic("TerraformType")
+// MapNestedAttributesCustomType for experimentation
+type MapNestedAttributesCustomType struct {
+	types.NestedAttributes
 }
 
-func (l ListNestedAttributesCustomTypeType) ValueType(ctx context.Context) attr.Value {
-	//TODO implement me
-	panic("ValueType")
+func (lnact MapNestedAttributesCustomType) Type() attr.Type {
+	return MapNestedAttributesCustomTypeType{
+		lnact.NestedAttributes.Type(),
+	}
 }
 
-func (l ListNestedAttributesCustomTypeType) Equal(t attr.Type) bool {
-	//TODO implement me
-	panic("Equal")
+type MapNestedAttributesCustomTypeType struct {
+	attr.Type
 }
 
-func (l ListNestedAttributesCustomTypeType) String() string {
-	//TODO implement me
-	panic("String")
-}
-
-func (l ListNestedAttributesCustomTypeType) ApplyTerraform5AttributePathStep(step tftypes.AttributePathStep) (interface{}, error) {
-	//TODO implement me
-	panic("ApplyTerraform5AttributePathStep")
-}
-*/
-
-type exampleResourceData struct {
-	Id types.String `tfsdk:"id"`
-
-	ListNestedAttribute types.List `tfsdk:"list_nested_attribute"`
-
-	ListNestedAttributeCustom ListNestedAttributesCustomValue `tfsdk:"list_nested_attribute_custom"`
-}
-
-// Create is unmarshalling the config onto exampleResourceData and persisting to the state.
-func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data exampleResourceData
-
-	diags := req.Plan.Get(ctx, &data)
-	resp.Diagnostics.Append(diags...)
-
-	if resp.Diagnostics.HasError() {
-		return
+func (l MapNestedAttributesCustomTypeType) ValueFromTerraform(ctx context.Context, value tftypes.Value) (attr.Value, error) {
+	val, err := l.Type.ValueFromTerraform(ctx, value)
+	if err != nil {
+		return nil, err
 	}
 
-	data.ListNestedAttributeCustom.CustomFunc(ctx)
-
-	data.Id = types.String{Value: "example-id"}
-
-	diags = resp.State.Set(ctx, &data)
-	resp.Diagnostics.Append(diags...)
+	return MapNestedAttributesCustomValue{
+		val.(types.Map),
+	}, nil
 }
 
-// Read is returning the contents of the state for this resource and the State field within resource.ReadResponse
-// is pre-populated so no action is required in this function.
-func (e *exampleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+type MapNestedAttributesCustomValue struct {
+	types.Map
 }
 
-// Update overwrites the state with the plan. This is required in order that optional attributes in the config
-// are updated in place.
-func (e *exampleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data exampleResourceData
+func (l MapNestedAttributesCustomValue) ToFrameworkValue() attr.Value {
+	return l.Map
+}
 
-	diags := req.Plan.Get(ctx, &data)
-	resp.Diagnostics.Append(diags...)
+func (l MapNestedAttributesCustomValue) CustomFunc(ctx context.Context) {
+	tflog.Info(ctx, "calling CustomFunc on custom map nested attribute")
+}
 
-	if resp.Diagnostics.HasError() {
-		return
+// SetNestedAttributesCustomType for experimentation
+type SetNestedAttributesCustomType struct {
+	types.NestedAttributes
+}
+
+func (lnact SetNestedAttributesCustomType) Type() attr.Type {
+	return SetNestedAttributesCustomTypeType{
+		lnact.NestedAttributes.Type(),
+	}
+}
+
+type SetNestedAttributesCustomTypeType struct {
+	attr.Type
+}
+
+func (l SetNestedAttributesCustomTypeType) ValueFromTerraform(ctx context.Context, value tftypes.Value) (attr.Value, error) {
+	val, err := l.Type.ValueFromTerraform(ctx, value)
+	if err != nil {
+		return nil, err
 	}
 
-	diags = resp.State.Set(ctx, &data)
-	resp.Diagnostics.Append(diags...)
+	return SetNestedAttributesCustomValue{
+		val.(types.Set),
+	}, nil
 }
 
-// Delete is automatically handled by the Framework which sets an empty state. This function does not need to
-// be populated unless additional handling needs to be implemented over and above setting an empty state.
-func (e *exampleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+type SetNestedAttributesCustomValue struct {
+	types.Set
+}
+
+func (l SetNestedAttributesCustomValue) ToFrameworkValue() attr.Value {
+	return l.Set
+}
+
+func (l SetNestedAttributesCustomValue) CustomFunc(ctx context.Context) {
+	tflog.Info(ctx, "calling CustomFunc on custom set nested attribute")
+}
+
+// SingleNestedAttributesCustomType for experimentation
+type SingleNestedAttributesCustomType struct {
+	types.NestedAttributes
+}
+
+func (lnact SingleNestedAttributesCustomType) Type() attr.Type {
+	return SingleNestedAttributesCustomTypeType{
+		lnact.NestedAttributes.Type(),
+	}
+}
+
+type SingleNestedAttributesCustomTypeType struct {
+	attr.Type
+}
+
+func (l SingleNestedAttributesCustomTypeType) ValueFromTerraform(ctx context.Context, value tftypes.Value) (attr.Value, error) {
+	val, err := l.Type.ValueFromTerraform(ctx, value)
+	if err != nil {
+		return nil, err
+	}
+
+	return SingleNestedAttributesCustomValue{
+		val.(types.Object),
+	}, nil
+}
+
+type SingleNestedAttributesCustomValue struct {
+	types.Object
+}
+
+func (l SingleNestedAttributesCustomValue) ToFrameworkValue() attr.Value {
+	return l.Object
+}
+
+func (l SingleNestedAttributesCustomValue) CustomFunc(ctx context.Context) {
+	tflog.Info(ctx, "calling CustomFunc on custom single nested attribute")
 }
