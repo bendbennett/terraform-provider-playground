@@ -36,143 +36,128 @@ func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 				Type: types.StringType,
 			},
 
-			"list_nested_attribute": {
-				Optional: true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"int64_attribute": {
-						Optional: true,
-						Type:     types.Int64Type,
-					},
-					"list_attribute": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
-				}),
-			},
-
-			"list_nested_attribute_custom": {
-				Optional: true,
-				Attributes: ListNestedAttributesCustomType{
-					tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-						"int64_attribute": {
-							Optional: true,
-							Type:     types.Int64Type,
-						},
-						"list_attribute": {
-							Optional: true,
-							Type:     types.ListType{ElemType: types.StringType},
-						},
-					}),
-				},
-			},
-
-			"map_nested_attribute": {
-				Optional: true,
-				Attributes: tfsdk.MapNestedAttributes(map[string]tfsdk.Attribute{
-					"int64_attribute": {
-						Optional: true,
-						Type:     types.Int64Type,
-					},
-					"list_attribute": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
-				}),
-			},
-
-			"map_nested_attribute_custom": {
-				Optional: true,
-				Attributes: MapNestedAttributesCustomType{
-					tfsdk.MapNestedAttributes(map[string]tfsdk.Attribute{
-						"int64_attribute": {
-							Optional: true,
-							Type:     types.Int64Type,
-						},
-						"list_attribute": {
-							Optional: true,
-							Type:     types.ListType{ElemType: types.StringType},
-						},
-					}),
-				},
-			},
-
-			"set_nested_attribute": {
-				Optional: true,
-				Attributes: tfsdk.SetNestedAttributes(map[string]tfsdk.Attribute{
-					"int64_attribute": {
-						Optional: true,
-						Type:     types.Int64Type,
-					},
-					"list_attribute": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
-				}),
-			},
-
-			"set_nested_attribute_custom": {
-				Optional: true,
-				Attributes: SetNestedAttributesCustomType{
-					tfsdk.SetNestedAttributes(map[string]tfsdk.Attribute{
-						"int64_attribute": {
-							Optional: true,
-							Type:     types.Int64Type,
-						},
-						"list_attribute": {
-							Optional: true,
-							Type:     types.ListType{ElemType: types.StringType},
-						},
-					}),
-				},
-			},
-
-			"single_nested_attribute": {
-				Optional: true,
-				Attributes: tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
-					"int64_attribute": {
-						Optional: true,
-						Type:     types.Int64Type,
-					},
-					"list_attribute": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
-				}),
-			},
-
-			"single_nested_attribute_custom": {
-				Optional: true,
-				Attributes: SingleNestedAttributesCustomType{
-					tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
-						"int64_attribute": {
-							Optional: true,
-							Type:     types.Int64Type,
-						},
-						"list_attribute": {
-							Optional: true,
-							Type:     types.ListType{ElemType: types.StringType},
-						},
-					}),
-				},
-			},
+			//"list_nested_attribute": {
+			//	Optional: true,
+			//	Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+			//		"int64_attribute": {
+			//			Optional: true,
+			//			Type:     types.Int64Type,
+			//		},
+			//		"list_attribute": {
+			//			Optional: true,
+			//			Type:     types.ListType{ElemType: types.StringType},
+			//		},
+			//	}),
+			//},
+			//
+			//"list_nested_attribute_custom": {
+			//	Optional: true,
+			//	Attributes: ListNestedAttributesCustomType{
+			//		tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+			//			"int64_attribute": {
+			//				Optional: true,
+			//				Type:     types.Int64Type,
+			//			},
+			//			"list_attribute": {
+			//				Optional: true,
+			//				Type:     types.ListType{ElemType: types.StringType},
+			//			},
+			//		}),
+			//	},
+			//},
+			//
+			//"map_nested_attribute": {
+			//	Optional: true,
+			//	Attributes: tfsdk.MapNestedAttributes(map[string]tfsdk.Attribute{
+			//		"int64_attribute": {
+			//			Optional: true,
+			//			Type:     types.Int64Type,
+			//		},
+			//		"list_attribute": {
+			//			Optional: true,
+			//			Type:     types.ListType{ElemType: types.StringType},
+			//		},
+			//	}),
+			//},
+			//
+			//"map_nested_attribute_custom": {
+			//	Optional: true,
+			//	Attributes: MapNestedAttributesCustomType{
+			//		tfsdk.MapNestedAttributes(map[string]tfsdk.Attribute{
+			//			"int64_attribute": {
+			//				Optional: true,
+			//				Type:     types.Int64Type,
+			//			},
+			//			"list_attribute": {
+			//				Optional: true,
+			//				Type:     types.ListType{ElemType: types.StringType},
+			//			},
+			//		}),
+			//	},
+			//},
+			//
+			//"set_nested_attribute": {
+			//	Optional: true,
+			//	Attributes: tfsdk.SetNestedAttributes(map[string]tfsdk.Attribute{
+			//		"int64_attribute": {
+			//			Optional: true,
+			//			Type:     types.Int64Type,
+			//		},
+			//		"list_attribute": {
+			//			Optional: true,
+			//			Type:     types.ListType{ElemType: types.StringType},
+			//		},
+			//	}),
+			//},
+			//
+			//"set_nested_attribute_custom": {
+			//	Optional: true,
+			//	Attributes: SetNestedAttributesCustomType{
+			//		tfsdk.SetNestedAttributes(map[string]tfsdk.Attribute{
+			//			"int64_attribute": {
+			//				Optional: true,
+			//				Type:     types.Int64Type,
+			//			},
+			//			"list_attribute": {
+			//				Optional: true,
+			//				Type:     types.ListType{ElemType: types.StringType},
+			//			},
+			//		}),
+			//	},
+			//},
+			//
+			//"single_nested_attribute": {
+			//	Optional: true,
+			//	Attributes: tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
+			//		"int64_attribute": {
+			//			Optional: true,
+			//			Type:     types.Int64Type,
+			//		},
+			//		"list_attribute": {
+			//			Optional: true,
+			//			Type:     types.ListType{ElemType: types.StringType},
+			//		},
+			//	}),
+			//},
+			//
+			//"single_nested_attribute_custom": {
+			//	Optional: true,
+			//	Attributes: SingleNestedAttributesCustomType{
+			//		tfsdk.SingleNestedAttributes(map[string]tfsdk.Attribute{
+			//			"int64_attribute": {
+			//				Optional: true,
+			//				Type:     types.Int64Type,
+			//			},
+			//			"list_attribute": {
+			//				Optional: true,
+			//				Type:     types.ListType{ElemType: types.StringType},
+			//			},
+			//		}),
+			//	},
+			//},
 		},
 		Blocks: map[string]tfsdk.Block{
-			"list_nested_block": {
-				Attributes: map[string]tfsdk.Attribute{
-					"int64_attribute": {
-						Optional: true,
-						Type:     types.Int64Type,
-					},
-					"list_attribute": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
-				},
-				NestingMode: tfsdk.BlockNestingModeList,
-			},
-
-			//"list_nested_block_custom": {
-			//	Typ: ListNestedBlockCustomType{},
+			//"list_nested_block": {
 			//	Attributes: map[string]tfsdk.Attribute{
 			//		"int64_attribute": {
 			//			Optional: true,
@@ -186,34 +171,49 @@ func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 			//	NestingMode: tfsdk.BlockNestingModeList,
 			//},
 
-			"single_nested_block": {
+			"list_nested_block_custom": {
+				Typ: ListNestedBlockCustomType{},
 				Attributes: map[string]tfsdk.Attribute{
 					"int64_attribute": {
 						Optional: true,
 						Type:     types.Int64Type,
 					},
-					"list_attribute": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
+					//"list_attribute": {
+					//	Optional: true,
+					//	Type:     types.ListType{ElemType: types.StringType},
+					//},
 				},
-				NestingMode: tfsdk.BlockNestingModeSingle,
+				NestingMode: tfsdk.BlockNestingModeList,
 			},
 
-			"single_nested_block_custom": {
-				Typ: SingleNestedBlockCustomType{},
-				Attributes: map[string]tfsdk.Attribute{
-					"int64_attribute": {
-						Optional: true,
-						Type:     types.Int64Type,
-					},
-					"list_attribute": {
-						Optional: true,
-						Type:     types.ListType{ElemType: types.StringType},
-					},
-				},
-				NestingMode: tfsdk.BlockNestingModeSingle,
-			},
+			//"single_nested_block": {
+			//	Attributes: map[string]tfsdk.Attribute{
+			//		"int64_attribute": {
+			//			Optional: true,
+			//			Type:     types.Int64Type,
+			//		},
+			//		"list_attribute": {
+			//			Optional: true,
+			//			Type:     types.ListType{ElemType: types.StringType},
+			//		},
+			//	},
+			//	NestingMode: tfsdk.BlockNestingModeSingle,
+			//},
+			//
+			//"single_nested_block_custom": {
+			//	Typ: SingleNestedBlockCustomType{},
+			//	Attributes: map[string]tfsdk.Attribute{
+			//		"int64_attribute": {
+			//			Optional: true,
+			//			Type:     types.Int64Type,
+			//		},
+			//		"list_attribute": {
+			//			Optional: true,
+			//			Type:     types.ListType{ElemType: types.StringType},
+			//		},
+			//	},
+			//	NestingMode: tfsdk.BlockNestingModeSingle,
+			//},
 		},
 	}, nil
 }
@@ -222,30 +222,30 @@ type exampleResourceData struct {
 	Id types.String `tfsdk:"id"`
 
 	//// Nested Attributes
-	ListNestedAttribute types.List `tfsdk:"list_nested_attribute"`
-
-	ListNestedAttributeCustom ListNestedAttributesCustomValue `tfsdk:"list_nested_attribute_custom"`
-
-	MapNestedAttribute types.Map `tfsdk:"map_nested_attribute"`
-
-	MapNestedAttributeCustom MapNestedAttributesCustomValue `tfsdk:"map_nested_attribute_custom"`
-
-	SetNestedAttribute types.Set `tfsdk:"set_nested_attribute"`
-
-	SetNestedAttributeCustom SetNestedAttributesCustomValue `tfsdk:"set_nested_attribute_custom"`
-
-	SingleNestedAttribute types.Object `tfsdk:"single_nested_attribute"`
-
-	SingleNestedAttributeCustom SingleNestedAttributesCustomValue `tfsdk:"single_nested_attribute_custom"`
+	//ListNestedAttribute types.List `tfsdk:"list_nested_attribute"`
+	//
+	//ListNestedAttributeCustom ListNestedAttributesCustomValue `tfsdk:"list_nested_attribute_custom"`
+	//
+	//MapNestedAttribute types.Map `tfsdk:"map_nested_attribute"`
+	//
+	//MapNestedAttributeCustom MapNestedAttributesCustomValue `tfsdk:"map_nested_attribute_custom"`
+	//
+	//SetNestedAttribute types.Set `tfsdk:"set_nested_attribute"`
+	//
+	//SetNestedAttributeCustom SetNestedAttributesCustomValue `tfsdk:"set_nested_attribute_custom"`
+	//
+	//SingleNestedAttribute types.Object `tfsdk:"single_nested_attribute"`
+	//
+	//SingleNestedAttributeCustom SingleNestedAttributesCustomValue `tfsdk:"single_nested_attribute_custom"`
 
 	// Nested Blocks
-	ListNestedBlock types.List `tfsdk:"list_nested_block"`
+	//ListNestedBlock types.List `tfsdk:"list_nested_block"`
 
-	//ListNestedBlockCustom ListNestedBlockCustomValue `tfsdk:"list_nested_block_custom"`
+	ListNestedBlockCustom ListNestedBlockCustomValue `tfsdk:"list_nested_block_custom"`
 
-	SingleNestedBlock types.Object `tfsdk:"single_nested_block"`
-
-	SingleNestedBlockCustom SingleNestedBlockCustomValue `tfsdk:"single_nested_block_custom"`
+	//SingleNestedBlock types.Object `tfsdk:"single_nested_block"`
+	//
+	//SingleNestedBlockCustom SingleNestedBlockCustomValue `tfsdk:"single_nested_block_custom"`
 }
 
 // Create is unmarshalling the config onto exampleResourceData and persisting to the state.
@@ -539,77 +539,82 @@ func (l SingleNestedAttributesCustomValue) CustomFunc(ctx context.Context) {
 //	tflog.Info(ctx, "calling CustomFunc on custom list nested attribute")
 //}
 
-//// ListNestedBlockCustomType for experimentation - embedded types.ObjectType
-//type ListNestedBlockCustomType struct {
-//	types.ObjectType
-//}
-//
-//func (t ListNestedBlockCustomType) WithAttributeTypes(typs map[string]attr.Type) attr.TypeWithAttributeTypes {
-//	return ListNestedBlockCustomType{
-//		types.ObjectType{
-//			AttrTypes: typs,
-//		},
-//	}
-//}
-//
-//func (t ListNestedBlockCustomType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
-//	obj, err := t.ObjectType.ValueFromTerraform(ctx, in)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	return ListNestedBlockCustomValue{
-//		obj.(types.Object),
-//	}, nil
-//}
-//
-//func (t ListNestedBlockCustomType) Equal(candidate attr.Type) bool {
-//	_, ok := candidate.(ListNestedBlockCustomType)
-//	if !ok {
-//		return false
-//	}
-//
-//	return t.ObjectType.Equal(candidate.(ListNestedBlockCustomType).ObjectType)
-//}
-//
-//func (t ListNestedBlockCustomType) ValueType(_ context.Context) attr.Value {
-//	return ListNestedBlockCustomValue{
-//		types.Object{
-//			AttrTypes: t.AttrTypes,
-//		},
-//	}
-//}
-//
-//type ListNestedBlockCustomValue struct {
-//	types.Object
-//}
-//
-//func (t ListNestedBlockCustomValue) Type(_ context.Context) attr.Type {
-//	return ListNestedBlockCustomType{
-//		types.ObjectType{AttrTypes: t.AttrTypes},
-//	}
-//}
-//
-//func (t ListNestedBlockCustomValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-//	return t.Object.ToTerraformValue(ctx)
-//}
-//
-//func (t ListNestedBlockCustomValue) Equal(c attr.Value) bool {
-//	_, ok := c.(ListNestedBlockCustomValue)
-//	if !ok {
-//		return false
-//	}
-//
-//	return t.Object.Equal(c)
-//}
-//
-//func (l ListNestedBlockCustomValue) ToFrameworkValue() attr.Value {
-//	return l.Object
-//}
-//
-//func (l ListNestedBlockCustomValue) CustomFunc(ctx context.Context) {
-//	tflog.Info(ctx, "calling CustomFunc on custom list nested block")
-//}
+// ListNestedBlockCustomType for experimentation - embedded types.ObjectType
+type ListNestedBlockCustomType struct {
+	types.ObjectType
+}
+
+func (l ListNestedBlockCustomType) ToFrameworkType() attr.Type {
+	return l.ObjectType
+}
+
+func (t ListNestedBlockCustomType) WithAttributeTypes(typs map[string]attr.Type) attr.TypeWithAttributeTypes {
+	return ListNestedBlockCustomType{
+		types.ObjectType{
+			AttrTypes: typs,
+		},
+	}
+}
+
+func (t ListNestedBlockCustomType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
+	obj, err := t.ObjectType.ValueFromTerraform(ctx, in)
+	if err != nil {
+		return nil, err
+	}
+
+	l := ListNestedBlockCustomValue{
+		obj.(types.Object),
+	}
+	return l, nil
+}
+
+func (t ListNestedBlockCustomType) Equal(candidate attr.Type) bool {
+	_, ok := candidate.(ListNestedBlockCustomType)
+	if !ok {
+		return false
+	}
+
+	return t.ObjectType.Equal(candidate.(ListNestedBlockCustomType).ObjectType)
+}
+
+func (t ListNestedBlockCustomType) ValueType(_ context.Context) attr.Value {
+	return ListNestedBlockCustomValue{
+		types.Object{
+			AttrTypes: t.AttrTypes,
+		},
+	}
+}
+
+type ListNestedBlockCustomValue struct {
+	types.Object
+}
+
+func (t ListNestedBlockCustomValue) Type(_ context.Context) attr.Type {
+	return ListNestedBlockCustomType{
+		types.ObjectType{AttrTypes: t.AttrTypes},
+	}
+}
+
+func (t ListNestedBlockCustomValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+	return t.Object.ToTerraformValue(ctx)
+}
+
+func (t ListNestedBlockCustomValue) Equal(c attr.Value) bool {
+	_, ok := c.(ListNestedBlockCustomValue)
+	if !ok {
+		return false
+	}
+
+	return t.Object.Equal(c)
+}
+
+func (l ListNestedBlockCustomValue) ToFrameworkValue() attr.Value {
+	return l.Object
+}
+
+func (l ListNestedBlockCustomValue) CustomFunc(ctx context.Context) {
+	tflog.Info(ctx, "calling CustomFunc on custom list nested block")
+}
 
 // SingleNestedBlockCustomType for experimentation
 type SingleNestedBlockCustomType struct {
