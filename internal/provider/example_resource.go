@@ -157,19 +157,44 @@ func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 			},
 		},
 		Blocks: map[string]tfsdk.Block{
+			"list_nested_block": {
+				Attributes: map[string]tfsdk.Attribute{
+					"int64_attribute": {
+						Optional: true,
+						Type:     types.Int64Type,
+					},
+					"list_attribute": {
+						Optional: true,
+						Type:     types.ListType{ElemType: types.StringType},
+					},
+				},
+				NestingMode: tfsdk.BlockNestingModeList,
+			},
+
+			//"list_nested_block_custom": {
+			//	Typ: ListNestedBlockCustomType{},
+			//	Attributes: map[string]tfsdk.Attribute{
+			//		"int64_attribute": {
+			//			Optional: true,
+			//			Type:     types.Int64Type,
+			//		},
+			//		//"list_attribute": {
+			//		//	Optional: true,
+			//		//	Type:     types.ListType{ElemType: types.StringType},
+			//		//},
+			//	},
+			//	NestingMode: tfsdk.BlockNestingModeList,
+			//},
+
 			"single_nested_block": {
 				Attributes: map[string]tfsdk.Attribute{
-					"first": {
+					"int64_attribute": {
 						Optional: true,
-						Type:     types.StringType,
+						Type:     types.Int64Type,
 					},
-					"second": {
+					"list_attribute": {
 						Optional: true,
-						Type:     types.StringType,
-					},
-					"third": {
-						Optional: true,
-						Type:     types.StringType,
+						Type:     types.ListType{ElemType: types.StringType},
 					},
 				},
 				NestingMode: tfsdk.BlockNestingModeSingle,
@@ -178,17 +203,13 @@ func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 			"single_nested_block_custom": {
 				Typ: SingleNestedBlockCustomType{},
 				Attributes: map[string]tfsdk.Attribute{
-					"first": {
+					"int64_attribute": {
 						Optional: true,
-						Type:     types.StringType,
+						Type:     types.Int64Type,
 					},
-					"second": {
+					"list_attribute": {
 						Optional: true,
-						Type:     types.StringType,
-					},
-					"third": {
-						Optional: true,
-						Type:     types.StringType,
+						Type:     types.ListType{ElemType: types.StringType},
 					},
 				},
 				NestingMode: tfsdk.BlockNestingModeSingle,
@@ -200,7 +221,7 @@ func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 type exampleResourceData struct {
 	Id types.String `tfsdk:"id"`
 
-	// Nested Attributes
+	//// Nested Attributes
 	ListNestedAttribute types.List `tfsdk:"list_nested_attribute"`
 
 	ListNestedAttributeCustom ListNestedAttributesCustomValue `tfsdk:"list_nested_attribute_custom"`
@@ -218,6 +239,10 @@ type exampleResourceData struct {
 	SingleNestedAttributeCustom SingleNestedAttributesCustomValue `tfsdk:"single_nested_attribute_custom"`
 
 	// Nested Blocks
+	ListNestedBlock types.List `tfsdk:"list_nested_block"`
+
+	//ListNestedBlockCustom ListNestedBlockCustomValue `tfsdk:"list_nested_block_custom"`
+
 	SingleNestedBlock types.Object `tfsdk:"single_nested_block"`
 
 	SingleNestedBlockCustom SingleNestedBlockCustomValue `tfsdk:"single_nested_block_custom"`
@@ -234,10 +259,12 @@ func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	data.ListNestedAttributeCustom.CustomFunc(ctx)
-	data.MapNestedAttributeCustom.CustomFunc(ctx)
-	data.SetNestedAttributeCustom.CustomFunc(ctx)
-	data.SingleNestedAttributeCustom.CustomFunc(ctx)
+	//data.ListNestedAttributeCustom.CustomFunc(ctx)
+	//data.MapNestedAttributeCustom.CustomFunc(ctx)
+	//data.SetNestedAttributeCustom.CustomFunc(ctx)
+	//data.SingleNestedAttributeCustom.CustomFunc(ctx)
+	//
+	//data.SingleNestedBlockCustom.CustomFunc(ctx)
 
 	data.Id = types.String{Value: "example-id"}
 
@@ -276,9 +303,9 @@ type ListNestedAttributesCustomType struct {
 	types.NestedAttributes
 }
 
-func (lnact ListNestedAttributesCustomType) Type() attr.Type {
+func (l ListNestedAttributesCustomType) Type() attr.Type {
 	return ListNestedAttributesCustomTypeType{
-		lnact.NestedAttributes.Type(),
+		l.NestedAttributes.Type(),
 	}
 }
 
@@ -423,6 +450,167 @@ func (l SingleNestedAttributesCustomValue) CustomFunc(ctx context.Context) {
 	tflog.Info(ctx, "calling CustomFunc on custom single nested attribute")
 }
 
+//// ListNestedBlockCustomType for experimentation - embedded types.List
+//type ListNestedBlockCustomType struct {
+//	types.List
+//}
+//
+//func (l ListNestedBlockCustomType) ApplyTerraform5AttributePathStep(step tftypes.AttributePathStep) (interface{}, error) {
+//	//TODO implement me
+//	panic("implement me")
+//}
+//
+//func (l ListNestedBlockCustomType) TerraformType(ctx context.Context) tftypes.Type {
+//	var listElemType tftypes.Type
+//
+//	for _, v := range l.Elements() {
+//		listElemType = v.Type(ctx).TerraformType(ctx)
+//	}
+//
+//	return tftypes.List{
+//		ElementType: listElemType,
+//	}
+//}
+//
+//func (l ListNestedBlockCustomType) ValueFromTerraform(ctx context.Context, value tftypes.Value) (attr.Value, error) {
+//	//TODO implement me
+//	panic("ValueFromTerraform")
+//}
+//
+//func (l ListNestedBlockCustomType) ValueType(ctx context.Context) attr.Value {
+//	//TODO implement me
+//	panic("ValueType")
+//}
+//
+//func (l ListNestedBlockCustomType) Equal(t attr.Type) bool {
+//	//TODO implement me
+//	panic("Equal")
+//}
+//
+//func (l ListNestedBlockCustomType) String() string {
+//	//TODO implement me
+//	panic("String")
+//}
+//
+//func (l ListNestedBlockCustomType) WithAttributeTypes(typs map[string]attr.Type) attr.TypeWithAttributeTypes {
+//	return ListNestedBlockCustomType{
+//		types.List{
+//			ElemType: types.ObjectType{
+//				AttrTypes: typs,
+//			},
+//		},
+//	}
+//}
+//
+//func (l ListNestedBlockCustomType) AttributeTypes() map[string]attr.Type {
+//	//TODO implement me
+//	panic("AttributeTypes")
+//}
+//
+//func (l ListNestedBlockCustomType) Type() attr.Type {
+//	//TODO implement me
+//	panic("Type")
+//}
+//
+//type ListNestedBlockCustomTypeType struct {
+//	attr.Type
+//}
+//
+//func (l ListNestedBlockCustomTypeType) ValueFromTerraform(ctx context.Context, value tftypes.Value) (attr.Value, error) {
+//	val, err := l.Type.ValueFromTerraform(ctx, value)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return ListNestedBlockCustomValue{
+//		val.(types.List),
+//	}, nil
+//}
+//
+//type ListNestedBlockCustomValue struct {
+//	types.List
+//}
+//
+//func (l ListNestedBlockCustomValue) ToFrameworkValue() attr.Value {
+//	return l.List
+//}
+//
+//func (l ListNestedBlockCustomValue) CustomFunc(ctx context.Context) {
+//	tflog.Info(ctx, "calling CustomFunc on custom list nested attribute")
+//}
+
+//// ListNestedBlockCustomType for experimentation - embedded types.ObjectType
+//type ListNestedBlockCustomType struct {
+//	types.ObjectType
+//}
+//
+//func (t ListNestedBlockCustomType) WithAttributeTypes(typs map[string]attr.Type) attr.TypeWithAttributeTypes {
+//	return ListNestedBlockCustomType{
+//		types.ObjectType{
+//			AttrTypes: typs,
+//		},
+//	}
+//}
+//
+//func (t ListNestedBlockCustomType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
+//	obj, err := t.ObjectType.ValueFromTerraform(ctx, in)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return ListNestedBlockCustomValue{
+//		obj.(types.Object),
+//	}, nil
+//}
+//
+//func (t ListNestedBlockCustomType) Equal(candidate attr.Type) bool {
+//	_, ok := candidate.(ListNestedBlockCustomType)
+//	if !ok {
+//		return false
+//	}
+//
+//	return t.ObjectType.Equal(candidate.(ListNestedBlockCustomType).ObjectType)
+//}
+//
+//func (t ListNestedBlockCustomType) ValueType(_ context.Context) attr.Value {
+//	return ListNestedBlockCustomValue{
+//		types.Object{
+//			AttrTypes: t.AttrTypes,
+//		},
+//	}
+//}
+//
+//type ListNestedBlockCustomValue struct {
+//	types.Object
+//}
+//
+//func (t ListNestedBlockCustomValue) Type(_ context.Context) attr.Type {
+//	return ListNestedBlockCustomType{
+//		types.ObjectType{AttrTypes: t.AttrTypes},
+//	}
+//}
+//
+//func (t ListNestedBlockCustomValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+//	return t.Object.ToTerraformValue(ctx)
+//}
+//
+//func (t ListNestedBlockCustomValue) Equal(c attr.Value) bool {
+//	_, ok := c.(ListNestedBlockCustomValue)
+//	if !ok {
+//		return false
+//	}
+//
+//	return t.Object.Equal(c)
+//}
+//
+//func (l ListNestedBlockCustomValue) ToFrameworkValue() attr.Value {
+//	return l.Object
+//}
+//
+//func (l ListNestedBlockCustomValue) CustomFunc(ctx context.Context) {
+//	tflog.Info(ctx, "calling CustomFunc on custom list nested block")
+//}
+
 // SingleNestedBlockCustomType for experimentation
 type SingleNestedBlockCustomType struct {
 	types.ObjectType
@@ -455,12 +643,6 @@ func (t SingleNestedBlockCustomType) Equal(candidate attr.Type) bool {
 
 	return t.ObjectType.Equal(candidate.(SingleNestedBlockCustomType).ObjectType)
 }
-
-//// String returns a human-friendly description of the ObjectType.
-//func (t SingleNestedBlockCustomType) String() string {
-//	t.ObjectType.String()
-//	return strings.Replace(t.ObjectType.String(), "types.ObjectType[", "SingleNestedBlockCustomValue.SingleNestedBlockCustomType[", 1)
-//}
 
 func (t SingleNestedBlockCustomType) ValueType(_ context.Context) attr.Value {
 	return SingleNestedBlockCustomValue{
@@ -495,4 +677,8 @@ func (t SingleNestedBlockCustomValue) Equal(c attr.Value) bool {
 
 func (l SingleNestedBlockCustomValue) ToFrameworkValue() attr.Value {
 	return l.Object
+}
+
+func (l SingleNestedBlockCustomValue) CustomFunc(ctx context.Context) {
+	tflog.Info(ctx, "calling CustomFunc on custom single nested block")
 }

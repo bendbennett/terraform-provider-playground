@@ -83,15 +83,31 @@ resource "playground_resource" "example" {
     list_attribute  = ["list-element", "list-element"]
   }
 
+  list_nested_block {
+    int64_attribute = 9223372036854775807
+    list_attribute  = ["list-element", "list-element"]
+  }
+  list_nested_block {
+    int64_attribute = 9223372036854775807
+    list_attribute  = ["list-element", "list-element"]
+  }
+
+#  list_nested_block_custom {
+#    int64_attribute = 9223372036854775807
+##    list_attribute  = ["list-element", "list-element"]
+#  }
+#  list_nested_block_custom {
+#    int64_attribute = 9223372036854775807
+##    list_attribute  = ["list-element", "list-element"]
+#  }
+
   single_nested_block {
-    first  = "one"
-    second = "two"
-    third  = "three"
+    int64_attribute = 9223372036854775807
+    list_attribute  = ["list-element", "list-element"]
   }
 
   single_nested_block_custom {
-    first  = "one"
-    second = "two"
-    third  = "three"
+    int64_attribute = 9223372036854775807
+    list_attribute  = ["list-element", "list-element"]
   }
 }
