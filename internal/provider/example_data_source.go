@@ -56,7 +56,7 @@ func (e *exampleDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
-	data.Id = types.String{Value: "example-id"}
+	data.Id = types.StringValue("example-id")
 
 	tflog.Trace(ctx, "read a data source")
 
