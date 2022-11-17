@@ -61,7 +61,7 @@ func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	data.Id = types.String{Value: "example-id"}
+	data.Id = types.StringValue("example-id")
 
 	tflog.Trace(ctx, "created a resource")
 
