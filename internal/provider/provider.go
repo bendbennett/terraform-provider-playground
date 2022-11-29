@@ -36,7 +36,7 @@ func (p *exampleProvider) Configure(ctx context.Context, req provider.ConfigureR
 }
 
 func (p *exampleProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "playground"
+	resp.TypeName = "example"
 }
 
 func (p *exampleProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
