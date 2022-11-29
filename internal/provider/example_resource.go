@@ -9,6 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 var _ resource.Resource = (*exampleResource)(nil)
@@ -23,6 +25,26 @@ func NewResource() resource.Resource {
 
 func (e *exampleResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_resource"
+}
+
+type CustomListNestedType struct {
+	types.ListType
+}
+
+func (c CustomListNestedType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
+	val, err := c.ListType.ValueFromTerraform(ctx, in)
+
+	return CustomListNestedValue{
+		val.(types.List),
+	}, err
+}
+
+type CustomListNestedValue struct {
+	types.List
+}
+
+func (c CustomListNestedValue) DoSomething(ctx context.Context) {
+	tflog.Info(ctx, "called DoSomething on CustomListNestedValue")
 }
 
 func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -88,6 +110,18 @@ func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest
 			// Nested Attributes
 			"list_nested_attribute": schema.ListNestedAttribute{
 				Optional: true,
+				CustomType: CustomListNestedType{
+					types.ListType{
+						ElemType: types.ObjectType{
+							AttrTypes: map[string]attr.Type{
+								"int64_attribute": types.Int64Type,
+								"list_attribute": types.ListType{
+									ElemType: types.StringType,
+								},
+							},
+						},
+					},
+				},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"int64_attribute": schema.Int64Attribute{
@@ -161,6 +195,27 @@ func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest
 		// Nested Blocks
 		Blocks: map[string]schema.Block{
 			"list_nested_block": schema.ListNestedBlock{
+				CustomType: CustomListNestedType{
+					types.ListType{
+						ElemType: types.ObjectType{
+							AttrTypes: map[string]attr.Type{
+								"bool_attribute":    types.BoolType,
+								"float64_attribute": types.Float64Type,
+								"int64_attribute":   types.Int64Type,
+								"list_attribute": types.ListType{
+									ElemType: types.StringType,
+								},
+								"list_nested_nested_block": types.ListType{
+									ElemType: types.ObjectType{
+										AttrTypes: map[string]attr.Type{
+											"bool_attribute": types.BoolType,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"bool_attribute": schema.BoolAttribute{
@@ -265,15 +320,15 @@ type exampleResourceData struct {
 	StringAttribute  types.String  `tfsdk:"string_attribute"`
 
 	// Nested Attributes
-	ListNestedAttribute   types.List   `tfsdk:"list_nested_attribute"`
-	MapNestedAttribute    types.Map    `tfsdk:"map_nested_attribute"`
-	SetNestedAttribute    types.Set    `tfsdk:"set_nested_attribute"`
-	SingleNestedAttribute types.Object `tfsdk:"single_nested_attribute"`
+	ListNestedAttribute   CustomListNestedValue `tfsdk:"list_nested_attribute"`
+	MapNestedAttribute    types.Map             `tfsdk:"map_nested_attribute"`
+	SetNestedAttribute    types.Set             `tfsdk:"set_nested_attribute"`
+	SingleNestedAttribute types.Object          `tfsdk:"single_nested_attribute"`
 
 	// Nested Blocks
-	ListNestedBlock   types.List   `tfsdk:"list_nested_block"`
-	SetNestedBlock    types.Set    `tfsdk:"set_nested_block"`
-	SingleNestedBlock types.Object `tfsdk:"single_nested_block"`
+	ListNestedBlock   CustomListNestedValue `tfsdk:"list_nested_block"`
+	SetNestedBlock    types.Set             `tfsdk:"set_nested_block"`
+	SingleNestedBlock types.Object          `tfsdk:"single_nested_block"`
 }
 
 // Create is unmarshalling the config onto exampleResourceData and persisting to the state.
@@ -286,6 +341,9 @@ func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ListNestedAttribute.DoSomething(ctx)
+	data.ListNestedBlock.DoSomething(ctx)
 
 	data.Id = types.StringValue("example-id")
 
