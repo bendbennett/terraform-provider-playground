@@ -3,10 +3,9 @@ package provider
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -15,7 +14,7 @@ var _ resource.Resource = (*exampleResource)(nil)
 var _ resource.ResourceWithImportState = (*exampleResource)(nil)
 
 type exampleResource struct {
-	provider playgroundProvider
+	provider exampleProvider
 }
 
 func NewResource() resource.Resource {
@@ -26,24 +25,22 @@ func (e *exampleResource) Metadata(_ context.Context, req resource.MetadataReque
 	resp.TypeName = req.ProviderTypeName + "_resource"
 }
 
-func (e *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
-		Attributes: map[string]tfsdk.Attribute{
-			"configurable_attribute": {
-				MarkdownDescription: "Example configurable attribute",
+func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"configurable_attribute": schema.StringAttribute{
 				Optional:            true,
-				Type:                types.StringType,
+				MarkdownDescription: "Example configurable attribute",
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Example identifier",
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
-				},
-				Type: types.StringType,
+				//PlanModifiers: tfsdk.AttributePlanModifiers{
+				//	resource.UseStateForUnknown(),
+				//},
 			},
 		},
-	}, nil
+	}
 }
 
 type exampleResourceData struct {

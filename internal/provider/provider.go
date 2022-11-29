@@ -4,21 +4,20 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ provider.Provider = (*playgroundProvider)(nil)
-var _ provider.ProviderWithMetadata = (*playgroundProvider)(nil)
+var _ provider.Provider = (*exampleProvider)(nil)
+var _ provider.ProviderWithMetadata = (*exampleProvider)(nil)
 
-type playgroundProvider struct{}
+type exampleProvider struct{}
 
 func New() func() provider.Provider {
 	return func() provider.Provider {
-		return &playgroundProvider{}
+		return &exampleProvider{}
 	}
 }
 
@@ -26,7 +25,7 @@ type providerData struct {
 	ConfigurableAttribute types.String `tfsdk:"configurable_attribute"`
 }
 
-func (p *playgroundProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+func (p *exampleProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	var data providerData
 	diags := req.Config.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -36,29 +35,28 @@ func (p *playgroundProvider) Configure(ctx context.Context, req provider.Configu
 	}
 }
 
-func (p *playgroundProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+func (p *exampleProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.TypeName = "playground"
 }
 
-func (p *playgroundProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+func (p *exampleProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewDataSource,
 	}
 }
 
-func (p *playgroundProvider) Resources(ctx context.Context) []func() resource.Resource {
+func (p *exampleProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewResource,
 	}
 }
 
-func (p *playgroundProvider) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
-		Attributes: map[string]tfsdk.Attribute{
-			"configurable_attribute": {
+func (p *exampleProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"configurable_attribute": schema.StringAttribute{
 				Optional: true,
-				Type:     types.StringType,
 			},
 		},
-	}, nil
+	}
 }

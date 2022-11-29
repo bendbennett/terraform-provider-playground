@@ -4,8 +4,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -13,7 +12,7 @@ import (
 var _ datasource.DataSource = (*exampleDataSource)(nil)
 
 type exampleDataSource struct {
-	provider playgroundProvider
+	provider exampleProvider
 }
 
 func NewDataSource() datasource.DataSource {
@@ -24,21 +23,19 @@ func (e *exampleDataSource) Metadata(ctx context.Context, req datasource.Metadat
 	resp.TypeName = req.ProviderTypeName + "_datasource"
 }
 
-func (e *exampleDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
-		Attributes: map[string]tfsdk.Attribute{
-			"configurable_attribute": {
+func (e *exampleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"configurable_attribute": schema.StringAttribute{
 				MarkdownDescription: "Example configurable attribute",
 				Optional:            true,
-				Type:                types.StringType,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "Example identifier",
-				Type:                types.StringType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 type exampleDataSourceData struct {
