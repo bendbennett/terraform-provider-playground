@@ -298,7 +298,6 @@ func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest
 					"float64_attribute": schema.Float64Attribute{
 						Optional: true,
 					},
->>>>>>> b4e47a7 (Setup attributes and blocks for provider, resource and data source)
 				},
 			},
 		},
