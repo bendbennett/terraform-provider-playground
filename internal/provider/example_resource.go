@@ -27,24 +27,25 @@ func (e *exampleResource) Metadata(_ context.Context, req resource.MetadataReque
 	resp.TypeName = req.ProviderTypeName + "_resource"
 }
 
-type CustomListNestedType struct {
+type CustomListType struct {
 	types.ListType
 }
 
-func (c CustomListNestedType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
+func (c CustomListType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	val, err := c.ListType.ValueFromTerraform(ctx, in)
 
-	return CustomListNestedValue{
+	return CustomListValue{
+		// unchecked type assertion
 		val.(types.List),
 	}, err
 }
 
-type CustomListNestedValue struct {
+type CustomListValue struct {
 	types.List
 }
 
-func (c CustomListNestedValue) DoSomething(ctx context.Context) {
-	tflog.Info(ctx, "called DoSomething on CustomListNestedValue")
+func (c CustomListValue) DoSomething(ctx context.Context) {
+	tflog.Info(ctx, "called DoSomething on CustomListValue")
 }
 
 func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -73,6 +74,11 @@ func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"list_attribute": schema.ListAttribute{
 				Optional:    true,
 				ElementType: types.StringType,
+				CustomType: CustomListType{
+					types.ListType{
+						ElemType: types.StringType,
+					},
+				},
 			},
 
 			"map_attribute": schema.MapAttribute{
@@ -110,7 +116,7 @@ func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest
 			// Nested Attributes
 			"list_nested_attribute": schema.ListNestedAttribute{
 				Optional: true,
-				CustomType: CustomListNestedType{
+				CustomType: CustomListType{
 					types.ListType{
 						ElemType: types.ObjectType{
 							AttrTypes: map[string]attr.Type{
@@ -195,7 +201,7 @@ func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest
 		// Nested Blocks
 		Blocks: map[string]schema.Block{
 			"list_nested_block": schema.ListNestedBlock{
-				CustomType: CustomListNestedType{
+				CustomType: CustomListType{
 					types.ListType{
 						ElemType: types.ObjectType{
 							AttrTypes: map[string]attr.Type{
@@ -308,26 +314,26 @@ type exampleResourceData struct {
 	Id types.String `tfsdk:"id"`
 
 	// Simple/primitive attributes
-	BoolAttribute    types.Bool    `tfsdk:"bool_attribute"`
-	Float64Attribute types.Float64 `tfsdk:"float64_attribute"`
-	Int64Attribute   types.Int64   `tfsdk:"int64_attribute"`
-	ListAttribute    types.List    `tfsdk:"list_attribute"`
-	MapAttribute     types.Map     `tfsdk:"map_attribute"`
-	NumberAttribute  types.Number  `tfsdk:"number_attribute"`
-	ObjectAttribute  types.Object  `tfsdk:"object_attribute"`
-	SetAttribute     types.Set     `tfsdk:"set_attribute"`
-	StringAttribute  types.String  `tfsdk:"string_attribute"`
+	BoolAttribute    types.Bool      `tfsdk:"bool_attribute"`
+	Float64Attribute types.Float64   `tfsdk:"float64_attribute"`
+	Int64Attribute   types.Int64     `tfsdk:"int64_attribute"`
+	ListAttribute    CustomListValue `tfsdk:"list_attribute"`
+	MapAttribute     types.Map       `tfsdk:"map_attribute"`
+	NumberAttribute  types.Number    `tfsdk:"number_attribute"`
+	ObjectAttribute  types.Object    `tfsdk:"object_attribute"`
+	SetAttribute     types.Set       `tfsdk:"set_attribute"`
+	StringAttribute  types.String    `tfsdk:"string_attribute"`
 
 	// Nested Attributes
-	ListNestedAttribute   CustomListNestedValue `tfsdk:"list_nested_attribute"`
-	MapNestedAttribute    types.Map             `tfsdk:"map_nested_attribute"`
-	SetNestedAttribute    types.Set             `tfsdk:"set_nested_attribute"`
-	SingleNestedAttribute types.Object          `tfsdk:"single_nested_attribute"`
+	ListNestedAttribute   CustomListValue `tfsdk:"list_nested_attribute"`
+	MapNestedAttribute    types.Map       `tfsdk:"map_nested_attribute"`
+	SetNestedAttribute    types.Set       `tfsdk:"set_nested_attribute"`
+	SingleNestedAttribute types.Object    `tfsdk:"single_nested_attribute"`
 
 	// Nested Blocks
-	ListNestedBlock   CustomListNestedValue `tfsdk:"list_nested_block"`
-	SetNestedBlock    types.Set             `tfsdk:"set_nested_block"`
-	SingleNestedBlock types.Object          `tfsdk:"single_nested_block"`
+	ListNestedBlock   CustomListValue `tfsdk:"list_nested_block"`
+	SetNestedBlock    types.Set       `tfsdk:"set_nested_block"`
+	SingleNestedBlock types.Object    `tfsdk:"single_nested_block"`
 }
 
 // Create is unmarshalling the config onto exampleResourceData and persisting to the state.
@@ -341,6 +347,7 @@ func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
+	data.ListAttribute.DoSomething(ctx)
 	data.ListNestedAttribute.DoSomething(ctx)
 	data.ListNestedBlock.DoSomething(ctx)
 
