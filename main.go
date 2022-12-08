@@ -6,12 +6,8 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
-	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
-	"github.com/hashicorp/terraform-plugin-go/tfprotov5/tf5server"
-	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
 
 	"github.com/bendbennett/terraform-provider-timeouts/internal/provider"
-	"github.com/bendbennett/terraform-provider-timeouts/internal/provider_sdk"
 )
 
 // Run "go generate" to format example terraform files and generate the docs for the registry/website
@@ -25,37 +21,38 @@ import (
 //go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 
 func main() {
-	ctx := context.Background()
-
 	var debug bool
 
 	flag.BoolVar(&debug, "debug", false, "set to true to run the provider with support for debuggers like delve")
 	flag.Parse()
 
-	providers := []func() tfprotov5.ProviderServer{
-		providerserver.NewProtocol5(provider.New()),
-		provider_sdk.Provider().GRPCProvider,
-	}
-
-	muxServer, err := tf5muxserver.NewMuxServer(ctx, providers...)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var serveOpts []tf5server.ServeOpt
-
-	if debug {
-		serveOpts = append(serveOpts, tf5server.WithManagedDebug())
-	}
-
-	err = tf5server.Serve(
-		"registry.terraform.io/bendbennett/timeouts",
-		muxServer.ProviderServer,
-		serveOpts...,
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// Mux Server
+	//ctx := context.Background()
+	//
+	//providers := []func() tfprotov5.ProviderServer{
+	//	providerserver.NewProtocol5(provider.New()),
+	//	provider_sdk.Provider().GRPCProvider,
+	//}
+	//
+	//muxServer, err := tf5muxserver.NewMuxServer(ctx, providers...)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//
+	//var serveOpts []tf5server.ServeOpt
+	//
+	//if debug {
+	//	serveOpts = append(serveOpts, tf5server.WithManagedDebug())
+	//}
+	//
+	//err = tf5server.Serve(
+	//	"registry.terraform.io/bendbennett/timeouts",
+	//	muxServer.ProviderServer,
+	//	serveOpts...,
+	//)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
 	// SDKv2 only
 	//plugin.Serve(&plugin.ServeOpts{
@@ -65,11 +62,11 @@ func main() {
 	//})
 
 	// Framework only
-	//err := providerserver.Serve(context.Background(), provider.New, providerserver.ServeOpts{
-	//	Address: "registry.terraform.io/bendbennett/timeouts",
-	//	Debug:   debug,
-	//})
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	err := providerserver.Serve(context.Background(), provider.New, providerserver.ServeOpts{
+		Address: "registry.terraform.io/bendbennett/timeouts",
+		Debug:   debug,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
 }

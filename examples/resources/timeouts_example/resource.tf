@@ -9,16 +9,16 @@ terraform {
 resource "timeouts_example" "example" {
   configurable_attribute = "some-value"
 
-#  Block
-  timeouts {
-    create = "60m"
-    read = "30m"
-    update = "12m"
-  }
-
-##  Attributes
-#  timeouts = {
+#  #  Block
+#  timeouts {
 #    create = "60m"
-#    read = "30m"
+#    read   = "30m"
+#    update = "12m"
 #  }
+
+  #  Attributes
+    timeouts = {
+      create = "60m"
+      read = "30m"
+    }
 }

@@ -66,7 +66,7 @@ func (d exampleDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 
 	// For the purposes of this example code, hardcoding a response value to
 	// save into the Terraform state.
-	data.Id = types.String{Value: "example-id"}
+	data.Id = types.StringValue("example-id")
 
 	// Write logs using the tflog package
 	// Documentation: https://terraform.io/plugin/log

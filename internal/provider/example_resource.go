@@ -3,13 +3,14 @@ package provider
 import (
 	"context"
 	"fmt"
-	"time"
 
-	"github.com/hashicorp/terraform-plugin-framework-timeouts/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	resourcetimeouts "github.com/hashicorp/terraform-plugin-framework-timeouts/timeouts/resource"
+	timeouts "github.com/hashicorp/terraform-plugin-framework-timeouts/timeouts/type"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -17,38 +18,40 @@ import (
 var _ resource.Resource = (*exampleResource)(nil)
 var _ resource.ResourceWithImportState = (*exampleResource)(nil)
 
-func (r *exampleResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *exampleResource) Schema(ctx context.Context, request resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Example resource",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"configurable_attribute": {
+		Attributes: map[string]schema.Attribute{
+			"configurable_attribute": schema.StringAttribute{
 				MarkdownDescription: "Example configurable attribute",
 				Optional:            true,
-				Type:                types.StringType,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Example identifier",
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
-				Type: types.StringType,
 			},
-			//"timeouts": timeouts.Attributes(ctx, timeouts.Opts{
-			//	Create: true,
-			//}),
-		},
-
-		Blocks: map[string]tfsdk.Block{
-			"timeouts": timeouts.Block(ctx, timeouts.Opts{
+			"timeouts": resourcetimeouts.Attributes(ctx, resourcetimeouts.Opts{
 				Create: true,
 				Read:   true,
-				Update: true,
 			}),
 		},
-	}, nil
+
+		//Blocks: map[string]schema.Block{
+		//	"timeouts": resourcetimeouts.Block(
+		//		ctx,
+		//		resourcetimeouts.Opts{
+		//			Create: true,
+		//			Read:   true,
+		//			Update: true,
+		//		},
+		//	),
+		//},
+	}
 }
 
 func NewResource() resource.Resource {
@@ -56,9 +59,9 @@ func NewResource() resource.Resource {
 }
 
 type exampleResourceData struct {
-	ConfigurableAttribute types.String      `tfsdk:"configurable_attribute"`
-	Id                    types.String      `tfsdk:"id"`
-	Timeouts              timeouts.Timeouts `tfsdk:"timeouts"`
+	ConfigurableAttribute types.String           `tfsdk:"configurable_attribute"`
+	Id                    types.String           `tfsdk:"id"`
+	Timeouts              timeouts.TimeoutsValue `tfsdk:"timeouts"`
 	//Timeouts              types.Object `tfsdk:"timeouts"`
 }
 
@@ -80,13 +83,17 @@ func (r *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	createTimeout := data.Timeouts.Create(ctx, time.Minute*20)
-	fmt.Println(createTimeout)
+	createTimeout, err := data.Timeouts.Create(ctx)
+	if err != nil {
+		// handle error
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("%v", createTimeout))
 
 	_, cancel := context.WithTimeout(ctx, createTimeout)
 	defer cancel()
 
-	data.Id = types.String{Value: "example-id"}
+	data.Id = types.StringValue("example-id")
 
 	tflog.Trace(ctx, "created a resource")
 
