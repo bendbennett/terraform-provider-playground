@@ -2,48 +2,56 @@ package provider
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/timeouts/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 var _ datasource.DataSource = exampleDataSource{}
 
-func (t exampleDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (t exampleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Example data source",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"configurable_attribute": {
+		Attributes: map[string]schema.Attribute{
+			"configurable_attribute": schema.StringAttribute{
 				MarkdownDescription: "Example configurable attribute",
 				Optional:            true,
-				Type:                types.StringType,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "Example identifier",
-				Type:                types.StringType,
 				Computed:            true,
 			},
+			"timeouts": timeouts.Attributes(ctx),
 		},
-	}, nil
+
+		//Blocks: map[string]schema.Block{
+		//	"timeouts": timeouts.Block(ctx),
+		//},
+	}
+}
+
+func NewDatasource() datasource.DataSource {
+	return &exampleDataSource{}
 }
 
 type exampleDataSourceData struct {
-	ConfigurableAttribute types.String `tfsdk:"configurable_attribute"`
-	Id                    types.String `tfsdk:"id"`
+	ConfigurableAttribute types.String   `tfsdk:"configurable_attribute"`
+	Id                    types.String   `tfsdk:"id"`
+	Timeouts              timeouts.Value `tfsdk:"timeouts"`
 }
 
 type exampleDataSource struct {
 	provider playgroundProvider
 }
 
-func (t exampleDataSource) Metadata(ctx context.Context, request datasource.MetadataRequest, response *datasource.MetadataResponse) {
-	//TODO implement me
-	panic("implement me")
+func (r exampleDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_example"
 }
 
 func (d exampleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -56,13 +64,15 @@ func (d exampleDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	// If applicable, this is a great opportunity to initialize any necessary
-	// provider client data and make a call using it.
-	// example, err := d.provider.client.ReadExample(...)
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read example, got error: %s", err))
-	//     return
-	// }
+	readTimeout, err := data.Timeouts.Read(ctx)
+	if err != nil {
+		// handle error
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("%v", readTimeout))
+
+	_, cancel := context.WithTimeout(ctx, readTimeout)
+	defer cancel()
 
 	// For the purposes of this example code, hardcoding a response value to
 	// save into the Terraform state.
