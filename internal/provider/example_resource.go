@@ -34,22 +34,22 @@ func (r *exampleResource) Schema(ctx context.Context, request resource.SchemaReq
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			//"timeouts": timeouts.Attributes(ctx, timeouts.Opts{
-			//	Create: true,
-			//	Read:   true,
-			//}),
+			"timeouts": resourcetimeouts.Attributes(ctx, resourcetimeouts.Opts{
+				Create: true,
+				Read:   true,
+			}),
 		},
 
-		Blocks: map[string]schema.Block{
-			"timeouts": timeouts.Block(
-				ctx,
-				timeouts.Opts{
-					Create: true,
-					Read:   true,
-					Update: true,
-				},
-			),
-		},
+		//Blocks: map[string]schema.Block{
+		//	"timeouts": resourcetimeouts.Block(
+		//		ctx,
+		//		resourcetimeouts.Opts{
+		//			Create: true,
+		//			Read:   true,
+		//			Update: true,
+		//		},
+		//	),
+		//},
 	}
 }
 
@@ -58,9 +58,9 @@ func NewResource() resource.Resource {
 }
 
 type exampleResourceData struct {
-	ConfigurableAttribute types.String   `tfsdk:"configurable_attribute"`
-	Id                    types.String   `tfsdk:"id"`
-	Timeouts              timeouts.Value `tfsdk:"timeouts"`
+	ConfigurableAttribute types.String           `tfsdk:"configurable_attribute"`
+	Id                    types.String           `tfsdk:"id"`
+	Timeouts              resourcetimeouts.Value `tfsdk:"timeouts"`
 	//Timeouts              types.Object `tfsdk:"timeouts"`
 }
 

@@ -27,12 +27,12 @@ func (t exampleDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				MarkdownDescription: "Example identifier",
 				Computed:            true,
 			},
-			"timeouts": timeouts.Attributes(ctx),
+			//"timeouts": datasourcetimeouts.Attributes(ctx),
 		},
 
-		//Blocks: map[string]schema.Block{
-		//	"timeouts": timeouts.Block(ctx),
-		//},
+		Blocks: map[string]schema.Block{
+			"timeouts": datasourcetimeouts.Block(ctx),
+		},
 	}
 }
 
@@ -41,9 +41,9 @@ func NewDatasource() datasource.DataSource {
 }
 
 type exampleDataSourceData struct {
-	ConfigurableAttribute types.String   `tfsdk:"configurable_attribute"`
-	Id                    types.String   `tfsdk:"id"`
-	Timeouts              timeouts.Value `tfsdk:"timeouts"`
+	ConfigurableAttribute types.String             `tfsdk:"configurable_attribute"`
+	Id                    types.String             `tfsdk:"id"`
+	Timeouts              datasourcetimeouts.Value `tfsdk:"timeouts"`
 }
 
 type exampleDataSource struct {
