@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework-timeouts/timeouts/datasource"
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -31,7 +31,7 @@ func (t exampleDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 		},
 
 		Blocks: map[string]schema.Block{
-			"timeouts": datasourcetimeouts.Block(ctx),
+			"timeouts": timeouts.Block(ctx),
 		},
 	}
 }
@@ -41,9 +41,9 @@ func NewDatasource() datasource.DataSource {
 }
 
 type exampleDataSourceData struct {
-	ConfigurableAttribute types.String             `tfsdk:"configurable_attribute"`
-	Id                    types.String             `tfsdk:"id"`
-	Timeouts              datasourcetimeouts.Value `tfsdk:"timeouts"`
+	ConfigurableAttribute types.String   `tfsdk:"configurable_attribute"`
+	Id                    types.String   `tfsdk:"id"`
+	Timeouts              timeouts.Value `tfsdk:"timeouts"`
 }
 
 type exampleDataSource struct {
