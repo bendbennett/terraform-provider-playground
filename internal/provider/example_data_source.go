@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -64,7 +65,7 @@ func (d exampleDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	readTimeout, err := data.Timeouts.Read(ctx)
+	readTimeout, err := data.Timeouts.Read(ctx, 20*time.Minute)
 	if err != nil {
 		// handle error
 	}

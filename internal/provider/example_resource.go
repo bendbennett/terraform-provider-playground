@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -82,7 +83,7 @@ func (r *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	createTimeout, err := data.Timeouts.Create(ctx)
+	createTimeout, err := data.Timeouts.Create(ctx, 20*time.Minute)
 	if err != nil {
 		// handle error
 	}
