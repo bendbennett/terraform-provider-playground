@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/hashicorp/terraform-plugin-docs v0.13.0
-	github.com/hashicorp/terraform-plugin-framework v0.16.0
+	github.com/hashicorp/terraform-plugin-framework v1.0.1
 	github.com/hashicorp/terraform-plugin-go v0.14.2
 	github.com/hashicorp/terraform-plugin-log v0.7.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.1
@@ -68,5 +68,3 @@ require (
 	google.golang.org/grpc v1.51.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
-
-replace github.com/hashicorp/terraform-plugin-framework => /Users/bdb/go/src/github/hashicorp/terraform-plugin-framework

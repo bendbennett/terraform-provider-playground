@@ -11,7 +11,6 @@ import (
 )
 
 var _ provider.Provider = (*exampleProvider)(nil)
-var _ provider.ProviderWithMetadata = (*exampleProvider)(nil)
 
 type exampleProvider struct{}
 
