@@ -35,22 +35,22 @@ func (r *exampleResource) Schema(ctx context.Context, request resource.SchemaReq
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"timeouts": timeouts.Attributes(ctx, timeouts.Opts{
-				Create: true,
-				Read:   true,
-			}),
+			//"timeouts": timeouts.Attributes(ctx, timeouts.Opts{
+			//	Create: true,
+			//	Read:   true,
+			//}),
 		},
 
-		//Blocks: map[string]schema.Block{
-		//	"timeouts": resourcetimeouts.Block(
-		//		ctx,
-		//		resourcetimeouts.Opts{
-		//			Create: true,
-		//			Read:   true,
-		//			Update: true,
-		//		},
-		//	),
-		//},
+		Blocks: map[string]schema.Block{
+			"timeouts": timeouts.Block(
+				ctx,
+				timeouts.Opts{
+					Create: true,
+					Read:   true,
+					Update: true,
+				},
+			),
+		},
 	}
 }
 
@@ -111,7 +111,15 @@ func (r *exampleResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	//_ = resource.ReadTimeout(ctx, req, 20*time.Minute)
+	t, diags := data.Timeouts.Read(ctx, 20*time.Minute)
+
+	resp.Diagnostics.Append(diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	tflog.Info(ctx, fmt.Sprintf("timeout = %s", t.String()))
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
