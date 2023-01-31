@@ -28,7 +28,7 @@ func (t exampleDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				MarkdownDescription: "Example identifier",
 				Computed:            true,
 			},
-			//"timeouts": datasourcetimeouts.Attributes(ctx),
+			//"timeouts": timeouts.Attributes(ctx),
 		},
 
 		Blocks: map[string]schema.Block{
@@ -65,9 +65,12 @@ func (d exampleDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	readTimeout, err := data.Timeouts.Read(ctx, 20*time.Minute)
-	if err != nil {
-		// handle error
+	readTimeout, diags := data.Timeouts.Read(ctx, 20*time.Minute)
+
+	resp.Diagnostics.Append(diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	tflog.Info(ctx, fmt.Sprintf("%v", readTimeout))

@@ -83,9 +83,12 @@ func (r *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	createTimeout, err := data.Timeouts.Create(ctx, 20*time.Minute)
-	if err != nil {
-		// handle error
+	createTimeout, diags := data.Timeouts.Create(ctx, 20*time.Minute)
+
+	resp.Diagnostics.Append(diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	tflog.Info(ctx, fmt.Sprintf("%v", createTimeout))
