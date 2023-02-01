@@ -2,7 +2,6 @@ package provider_sdk
 
 import (
 	"context"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -10,11 +9,6 @@ import (
 
 func exampleSdkResource() *schema.Resource {
 	return &schema.Resource{
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(45 * time.Minute),
-			Read:   schema.DefaultTimeout(45 * time.Minute),
-		},
-
 		CreateContext: create,
 		ReadContext:   read,
 		UpdateContext: update,
@@ -27,9 +21,9 @@ func exampleSdkResource() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"configurable_attribute": {
+			"labels": {
+				Type:     schema.TypeMap,
 				Optional: true,
-				Type:     schema.TypeString,
 			},
 			"id": {
 				Computed: true,
