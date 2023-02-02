@@ -13,7 +13,7 @@ var _ provider.Provider = &playgroundProvider{}
 type playgroundProvider struct{}
 
 func (p *playgroundProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "timeouts"
+	resp.TypeName = "playground"
 }
 
 func (p *playgroundProvider) Schema(context.Context, provider.SchemaRequest, *provider.SchemaResponse) {

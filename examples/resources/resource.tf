@@ -1,10 +1,10 @@
 terraform {
   required_providers {
-    timeouts = {
-      source = "bendbennett/timeouts"
+    playground = {
+      source = "bendbennett/playground"
     }
   }
 }
 
-resource "timeouts_example" "example" {
+resource "playground_example" "example" {
 }
