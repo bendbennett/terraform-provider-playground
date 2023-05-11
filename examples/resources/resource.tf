@@ -18,7 +18,7 @@ resource "example_resource" "example" {
 
   map_attribute = { "map-key-1" : "map-value-1" }
 
-  number_attribute = 1.79769313486231570814527423731704356798070e+1000
+  number_attribute = 1.7976931348623157e+308
 
   // Treated as an atomic unit.
   // Attributes are NOT configurable (i.e., cannot define required, optional,
@@ -29,7 +29,7 @@ resource "example_resource" "example" {
     int64_attribute   = 9223372036854775807
     list_attribute    = ["obj-list-element", "obj-list-element"]
     map_attribute     = { "obj-map-key-1" : "obj-map-value-1" }
-    number_attribute  = 1.79769313486231570814527423731704356798070e+1000
+    number_attribute  = 1.7976931348623157e+308
     set_attribute     = ["obj-set-element-1", "obj-set-element-2"]
     string_attribute  = "obj-string"
   }
@@ -55,11 +55,11 @@ resource "example_resource" "example" {
   map_nested_attribute = {
     "one" = {
       map_attribute    = { "map-key-1" : "map-value-1" }
-      number_attribute = 1.79769313486231570814527423731704356798070e+1000
+      number_attribute = 1.7976931348623157e+308
     },
     "two" = {
       map_attribute    = { "map-key-1" : "map-value-1" }
-      number_attribute = 1.79769313486231570814527423731704356798070e+1000
+      number_attribute = 1.7976931348623157e+308
     }
   }
 
@@ -72,7 +72,7 @@ resource "example_resource" "example" {
         int64_attribute   = 9223372036854775807
         list_attribute    = ["obj-list-element", "obj-list-element"]
         map_attribute     = { "obj-map-key-1" : "obj-map-value-1" }
-        number_attribute  = 1.79769313486231570814527423731704356798070e+1000
+        number_attribute  = 1.7976931348623157e+308
         set_attribute     = ["obj-set-element-1", "obj-set-element-2"]
         string_attribute  = "obj-string"
       }
@@ -86,7 +86,7 @@ resource "example_resource" "example" {
         int64_attribute   = 9223372036854775807
         list_attribute    = ["obj-list-element", "obj-list-element"]
         map_attribute     = { "obj-map-key-1" : "obj-map-value-1" }
-        number_attribute  = 1.79769313486231570814527423731704356798070e+1000
+        number_attribute  = 1.7976931348623157e+308
         set_attribute     = ["obj-set-element-1", "obj-set-element-2"]
         string_attribute  = "obj-string"
       }
@@ -136,14 +136,14 @@ resource "example_resource" "example" {
   // Each element in the set must be unique hence true/false for object bool_attribute.
   set_nested_block {
     map_attribute    = { "map-key-1" : "map-value-1" }
-    number_attribute = 1.79769313486231570814527423731704356798070e+1000
+    number_attribute = 1.7976931348623157e+308
     object_attribute = {
       bool_attribute    = true
       float64_attribute = 1234.5
       int64_attribute   = 9223372036854775807
       list_attribute    = ["obj-list-element", "obj-list-element"]
       map_attribute     = { "obj-map-key-1" : "obj-map-value-1" }
-      number_attribute  = 1.79769313486231570814527423731704356798070e+1000
+      number_attribute  = 1.7976931348623157e+308
       set_attribute     = ["obj-set-element-1", "obj-set-element-2"]
       string_attribute  = "obj-string"
     }
@@ -157,14 +157,14 @@ resource "example_resource" "example" {
   }
   set_nested_block {
     map_attribute    = { "map-key-1" : "map-value-1" }
-    number_attribute = 1.79769313486231570814527423731704356798070e+1000
+    number_attribute = 1.7976931348623157e+308
     object_attribute = {
       bool_attribute    = false
       float64_attribute = 1234.5
       int64_attribute   = 9223372036854775807
       list_attribute    = ["obj-list-element", "obj-list-element"]
       map_attribute     = { "obj-map-key-1" : "obj-map-value-1" }
-      number_attribute  = 1.79769313486231570814527423731704356798070e+1000
+      number_attribute  = 1.7976931348623157e+308
       set_attribute     = ["obj-set-element-1", "obj-set-element-2"]
       string_attribute  = "obj-string"
     }
