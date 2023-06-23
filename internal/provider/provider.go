@@ -239,6 +239,8 @@ func (p *exampleProvider) Schema(ctx context.Context, req provider.SchemaRequest
 }
 
 type providerData struct {
+	Id types.String `tfsdk:"id"`
+
 	BoolAttribute    types.Bool    `tfsdk:"bool_attribute"`
 	Float64Attribute types.Float64 `tfsdk:"float64_attribute"`
 	Int64Attribute   types.Int64   `tfsdk:"int64_attribute"`
@@ -250,15 +252,15 @@ type providerData struct {
 	StringAttribute  types.String  `tfsdk:"string_attribute"`
 
 	// Nested Attributes
-	ListNestedAttribute   []types.Object          `tfsdk:"list_nested_attribute"`
-	MapNestedAttribute    map[string]types.Object `tfsdk:"map_nested_attribute"`
-	SetNestedAttribute    []types.Object          `tfsdk:"set_nested_attribute"`
-	SingleNestedAttribute types.Object            `tfsdk:"single_nested_attribute"`
+	ListNestedAttribute   types.List   `tfsdk:"list_nested_attribute"`
+	MapNestedAttribute    types.Map    `tfsdk:"map_nested_attribute"`
+	SetNestedAttribute    types.Set    `tfsdk:"set_nested_attribute"`
+	SingleNestedAttribute types.Object `tfsdk:"single_nested_attribute"`
 
 	// Nested Blocks
-	ListNestedBlock   []types.Object `tfsdk:"list_nested_block"`
-	SetNestedBlock    []types.Object `tfsdk:"set_nested_block"`
-	SingleNestedBlock types.Object   `tfsdk:"single_nested_block"`
+	ListNestedBlock   types.List   `tfsdk:"list_nested_block"`
+	SetNestedBlock    types.Set    `tfsdk:"set_nested_block"`
+	SingleNestedBlock types.Object `tfsdk:"single_nested_block"`
 }
 
 func (p *exampleProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
