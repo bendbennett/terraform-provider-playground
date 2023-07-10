@@ -22,5 +22,3 @@ description: |-
 ### Read-Only
 
 - `id` (String) Example identifier
-
-
