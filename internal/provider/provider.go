@@ -239,8 +239,6 @@ func (p *exampleProvider) Schema(ctx context.Context, req provider.SchemaRequest
 }
 
 type providerData struct {
-	Id types.String `tfsdk:"id"`
-
 	BoolAttribute    types.Bool    `tfsdk:"bool_attribute"`
 	Float64Attribute types.Float64 `tfsdk:"float64_attribute"`
 	Int64Attribute   types.Int64   `tfsdk:"int64_attribute"`
