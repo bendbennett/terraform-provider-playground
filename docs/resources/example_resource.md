@@ -36,6 +36,7 @@ description: |-
 
 ### Read-Only
 
+<<<<<<< HEAD
 - `id` (String) The ID of this resource.
 
 <a id="nestedatt--list_nested_attribute"></a>
@@ -169,3 +170,6 @@ Optional:
 - `float64_attribute` (Number)
 
 
+=======
+- `id` (String) Example identifier
+>>>>>>> origin/main
