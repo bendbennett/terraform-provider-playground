@@ -1,10 +1,16 @@
 package main
 
 import (
+	"context"
 	"flag"
+	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5/tf5server"
+	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
 
+	"github.com/bendbennett/terraform-provider-playground/internal/provider"
 	"github.com/bendbennett/terraform-provider-playground/internal/provider_sdk"
 )
 
@@ -19,15 +25,37 @@ import (
 //go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 
 func main() {
+	ctx := context.Background()
+
 	var debug bool
 
 	flag.BoolVar(&debug, "debug", false, "set to true to run the provider with support for debuggers like delve")
 	flag.Parse()
 
-	// SDKv2 only
-	plugin.Serve(&plugin.ServeOpts{
-		ProviderFunc: provider_sdk.Provider,
-		Debug:        debug,
-		ProviderAddr: "registry.terraform.io/bendbennett/timeouts",
-	})
+	providers := []func() tfprotov5.ProviderServer{
+		providerserver.NewProtocol5(provider.New()), // Example terraform-plugin-framework provider
+		provider_sdk.Provider().GRPCProvider,        // Example terraform-plugin-sdk provider
+	}
+
+	muxServer, err := tf5muxserver.NewMuxServer(ctx, providers...)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var serveOpts []tf5server.ServeOpt
+
+	if debug {
+		serveOpts = append(serveOpts, tf5server.WithManagedDebug())
+	}
+
+	err = tf5server.Serve(
+		"registry.terraform.io/bendbennett/playground",
+		muxServer.ProviderServer,
+		serveOpts...,
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

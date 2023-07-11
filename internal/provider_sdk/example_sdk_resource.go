@@ -21,12 +21,10 @@ func exampleSdkResource() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"labels": {
-				Type:     schema.TypeMap,
+			"attr_settings": {
+				Type:     schema.TypeBool,
 				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
+				Default:  true,
 			},
 			"id": {
 				Computed: true,
