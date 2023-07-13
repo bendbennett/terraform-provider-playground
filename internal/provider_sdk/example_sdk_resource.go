@@ -3,6 +3,7 @@ package provider_sdk
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -13,6 +14,10 @@ func exampleSdkResource() *schema.Resource {
 		ReadContext:   read,
 		UpdateContext: update,
 		DeleteContext: schema.NoopContext,
+		CustomizeDiff: func(ctx context.Context, diff *schema.ResourceDiff, i interface{}) error {
+			tflog.Info(ctx, "calling CustomizeDiff")
+			return nil
+		},
 
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {

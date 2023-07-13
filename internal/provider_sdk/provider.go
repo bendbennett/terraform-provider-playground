@@ -1,13 +1,23 @@
 package provider_sdk
 
-import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-)
+import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		ResourcesMap: map[string]*schema.Resource{
-			//"playground_example": exampleSdkResource(),
+			"playground_example": exampleSdkResource(),
 		},
 	}
 }
+
+//func New() func() *schema.Provider {
+//	return func() *schema.Provider {
+//		p := &schema.Provider{
+//			ResourcesMap: map[string]*schema.Resource{
+//				"playground_example": exampleSdkResource(),
+//			},
+//		}
+//
+//		return p
+//	}
+//}
