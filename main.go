@@ -25,6 +25,7 @@ import (
 //go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 
 func main() {
+	// MUXED
 	ctx := context.Background()
 
 	var debug bool
@@ -59,6 +60,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	//// SDK ONLY
 	//var debugMode bool
 	//
 	//flag.BoolVar(&debugMode, "debug", false, "set to true to run the provider with support for debuggers like delve")
@@ -75,4 +77,21 @@ func main() {
 	//}
 	//
 	//plugin.Serve(opts)
+
+	//// FRAMEWORK ONLY
+	//var debug bool
+	//
+	//flag.BoolVar(&debug, "debug", false, "set to true to run the provider with support for debuggers like delve")
+	//flag.Parse()
+	//
+	//opts := providerserver.ServeOpts{
+	//	Address: "registry.terraform.io/example_namespace/example",
+	//	Debug:   debug,
+	//}
+	//
+	//err := providerserver.Serve(context.Background(), provider.New, opts)
+	//
+	//if err != nil {
+	//	log.Fatal(err.Error())
+	//}
 }
