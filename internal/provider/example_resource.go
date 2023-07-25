@@ -32,6 +32,7 @@ func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest
 		Attributes: map[string]schema.Attribute{
 			"configurable_attribute": schema.StringAttribute{
 				Optional:            true,
+				Computed:            true,
 				MarkdownDescription: "Example configurable attribute",
 			},
 			"id": schema.StringAttribute{
@@ -61,6 +62,7 @@ func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	data.Id = types.StringValue("example-id")
+	data.ConfigurableAttribute = types.StringValue("configurable attribute")
 
 	tflog.Trace(ctx, "created a resource")
 
@@ -77,6 +79,8 @@ func (e *exampleResource) Read(ctx context.Context, req resource.ReadRequest, re
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	data.ConfigurableAttribute = types.StringValue("set in read")
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
