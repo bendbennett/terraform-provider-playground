@@ -360,6 +360,17 @@ func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 // Read is returning the contents of the state for this resource and the State field within resource.ReadResponse
 // is pre-populated so no action is required in this function.
 func (e *exampleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data exampleResourceData
+
+	diags := req.State.Get(ctx, &data)
+	resp.Diagnostics.Append(diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	diags = resp.State.Set(ctx, &data)
+	resp.Diagnostics.Append(diags...)
 }
 
 // Update overwrites the state with the plan. This is required in order that optional attributes in the config
