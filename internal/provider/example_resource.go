@@ -62,7 +62,10 @@ func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	data.Id = types.StringValue("example-id")
-	data.ConfigurableAttribute = types.StringValue("configurable attribute")
+
+	if data.ConfigurableAttribute.IsNull() || data.ConfigurableAttribute.IsUnknown() {
+		data.ConfigurableAttribute = types.StringValue("configurable attribute")
+	}
 
 	tflog.Trace(ctx, "created a resource")
 
@@ -80,7 +83,9 @@ func (e *exampleResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	data.ConfigurableAttribute = types.StringValue("set in read")
+	if data.ConfigurableAttribute.IsNull() || data.ConfigurableAttribute.IsUnknown() {
+		data.ConfigurableAttribute = types.StringValue("set in read")
+	}
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
