@@ -12,7 +12,6 @@ import (
 var _ datasource.DataSource = (*exampleDataSource)(nil)
 
 type exampleDataSource struct {
-	provider exampleProvider
 }
 
 func NewDataSource() datasource.DataSource {

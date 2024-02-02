@@ -10,8 +10,9 @@ install: build
 lint:
 	golangci-lint run
 
+# Generate docs
 generate:
-	go generate ./...
+	cd tools; go generate ./...
 
 fmt:
 	gofmt -s -w -e .
