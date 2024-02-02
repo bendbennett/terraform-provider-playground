@@ -7,5 +7,5 @@ terraform {
 }
 
 resource "example_resource" "example" {
-#  configurable_attribute = "some-value"
+  #  configurable_attribute = "some-value"
 }

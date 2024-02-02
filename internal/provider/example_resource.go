@@ -16,7 +16,6 @@ var _ resource.Resource = (*exampleResource)(nil)
 var _ resource.ResourceWithImportState = (*exampleResource)(nil)
 
 type exampleResource struct {
-	provider exampleProvider
 }
 
 func NewResource() resource.Resource {
