@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/hashicorp/terraform-plugin-framework/types/validation"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -131,7 +132,7 @@ func (e *exampleResource) ImportState(ctx context.Context, req resource.ImportSt
 
 /************ CustomStringType *************/
 // Ensure the implementation satisfies the expected interfaces
-var _ basetypes.StringTypable = CustomStringType{}
+var _ validation.String = CustomStringType{}
 
 type CustomStringType struct {
 	basetypes.StringType
@@ -152,40 +153,58 @@ func (t CustomStringType) String() string {
 	return "CustomStringType"
 }
 
-// Validate CustomStringType defined in the schema type section
-func (t CustomStringType) Validate(ctx context.Context, value tftypes.Value, valuePath path.Path) diag.Diagnostics {
-	if value.IsNull() || !value.IsKnown() {
-		return nil
+//// Validate CustomStringType defined in the schema type section
+//func (t CustomStringType) Validate(ctx context.Context, value tftypes.Value, valuePath path.Path) diag.Diagnostics {
+//	if value.IsNull() || !value.IsKnown() {
+//		return nil
+//	}
+//
+//	var diags diag.Diagnostics
+//	var valueString string
+//
+//	if err := value.As(&valueString); err != nil {
+//		diags.AddAttributeError(
+//			valuePath,
+//			"Invalid Terraform Value",
+//			"An unexpected error occurred while attempting to convert a Terraform value to a string. "+
+//				"This generally is an issue with the provider schema implementation. "+
+//				"Please contact the provider developers.\n\n"+
+//				"Path: "+valuePath.String()+"\n"+
+//				"Error: "+err.Error(),
+//		)
+//
+//		return diags
+//	}
+//
+//	if valueString != "some-value" {
+//		diags.AddAttributeError(
+//			valuePath,
+//			"Invalid String Value",
+//			"Validate: supplied string does not equal \"some-value\"",
+//		)
+//
+//		return diags
+//	}
+//
+//	return diags
+//}
+
+func (t CustomStringType) ValidateString(ctx context.Context, req validation.StringRequest, resp *validation.StringResponse) {
+	if req.Value.IsNull() || req.Value.IsUnknown() {
+		return
 	}
 
 	var diags diag.Diagnostics
-	var valueString string
 
-	if err := value.As(&valueString); err != nil {
+	if req.Value.String() != "some-value" {
 		diags.AddAttributeError(
-			valuePath,
-			"Invalid Terraform Value",
-			"An unexpected error occurred while attempting to convert a Terraform value to a string. "+
-				"This generally is an issue with the provider schema implementation. "+
-				"Please contact the provider developers.\n\n"+
-				"Path: "+valuePath.String()+"\n"+
-				"Error: "+err.Error(),
-		)
-
-		return diags
-	}
-
-	if valueString != "some-value" {
-		diags.AddAttributeError(
-			valuePath,
+			req.Path,
 			"Invalid String Value",
-			"The supplied string does not equal \"some-value\"",
+			"ValidateString: supplied string does not equal \"some-value\"",
 		)
 
-		return diags
+		resp.Diagnostics.Append(diags...)
 	}
-
-	return diags
 }
 
 func (t CustomStringType) ValueFromString(ctx context.Context, in basetypes.StringValue) (basetypes.StringValuable, diag.Diagnostics) {
