@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -47,6 +48,12 @@ func (p *exampleProvider) DataSources(ctx context.Context) []func() datasource.D
 func (p *exampleProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewResource,
+	}
+}
+
+func (p *exampleProvider) Functions(ctx context.Context) []func() function.Function {
+	return []func() function.Function{
+		NewExampleFunction,
 	}
 }
 

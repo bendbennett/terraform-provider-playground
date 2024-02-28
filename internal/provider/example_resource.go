@@ -153,57 +153,33 @@ func (t CustomStringType) String() string {
 	return "CustomStringType"
 }
 
-//// Validate CustomStringType defined in the schema type section
-//func (t CustomStringType) Validate(ctx context.Context, value tftypes.Value, valuePath path.Path) diag.Diagnostics {
-//	if value.IsNull() || !value.IsKnown() {
-//		return nil
-//	}
-//
-//	var diags diag.Diagnostics
-//	var valueString string
-//
-//	if err := value.As(&valueString); err != nil {
-//		diags.AddAttributeError(
-//			valuePath,
-//			"Invalid Terraform Value",
-//			"An unexpected error occurred while attempting to convert a Terraform value to a string. "+
-//				"This generally is an issue with the provider schema implementation. "+
-//				"Please contact the provider developers.\n\n"+
-//				"Path: "+valuePath.String()+"\n"+
-//				"Error: "+err.Error(),
-//		)
-//
-//		return diags
-//	}
-//
-//	if valueString != "some-value" {
-//		diags.AddAttributeError(
-//			valuePath,
-//			"Invalid String Value",
-//			"Validate: supplied string does not equal \"some-value\"",
-//		)
-//
-//		return diags
-//	}
-//
-//	return diags
-//}
-
 func (t CustomStringType) ValidateString(ctx context.Context, req validation.StringRequest, resp *validation.StringResponse) {
 	if req.Value.IsNull() || req.Value.IsUnknown() {
 		return
 	}
 
-	var diags diag.Diagnostics
-
 	if req.Value.String() != "some-value" {
-		diags.AddAttributeError(
-			req.Path,
-			"Invalid String Value",
-			"ValidateString: supplied string does not equal \"some-value\"",
-		)
+		switch {
+		case req.Path.Steps() == nil || len(req.Path.Steps()) == 0:
+			resp.Diagnostics.AddAttributeError(
+				req.Path,
+				"Invalid String Value",
+				`ValidateString: supplied string does not equal "some-value"`,
+			)
 
-		resp.Diagnostics.Append(diags...)
+			return
+		case req.Position != nil:
+			resp.Diagnostics.AddArgumentError(
+				*req.Position,
+				"Invalid String Value",
+				`ValidateString: supplied string does not equal "some-value"`,
+			)
+		default:
+			resp.Diagnostics.AddError(
+				"Invalid String Value",
+				`ValidateString: supplied string does not equal "some-value"`,
+			)
+		}
 	}
 }
 
