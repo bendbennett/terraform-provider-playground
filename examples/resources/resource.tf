@@ -6,10 +6,10 @@ terraform {
   }
 }
 
-#resource "example_resource" "example" {
-#  configurable_attribute = "some-other-value"
-#}
-
-output "test" {
-  value = provider::example::function("here")
+resource "example_resource" "example" {
+  configurable_attribute = provider::example::function("some-value")
 }
+
+#output "test" {
+#  value = provider::example::function("some-value")
+#}

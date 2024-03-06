@@ -32,7 +32,7 @@ func (f ExampleFunction) Definition(ctx context.Context, req function.Definition
 func (f ExampleFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
 	var arg string
 
-	resp.Diagnostics.Append(req.Arguments.Get(ctx, &arg)...)
+	resp.Error = req.Arguments.Get(ctx, &arg)
 
-	resp.Diagnostics.Append(resp.Result.Set(ctx, arg)...)
+	resp.Error = function.ConcatFuncErrors(resp.Error, resp.Result.Set(ctx, arg))
 }
