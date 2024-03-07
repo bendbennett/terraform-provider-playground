@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ provider.Provider = (*exampleProvider)(nil)
+var _ provider.Provider = (*playgroundProvider)(nil)
 
-type exampleProvider struct{}
+type playgroundProvider struct{}
 
 func New() func() provider.Provider {
 	return func() provider.Provider {
-		return &exampleProvider{}
+		return &playgroundProvider{}
 	}
 }
 
@@ -24,7 +24,7 @@ type providerData struct {
 	ConfigurableAttribute types.String `tfsdk:"configurable_attribute"`
 }
 
-func (p *exampleProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+func (p *playgroundProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	var data providerData
 	diags := req.Config.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -34,23 +34,23 @@ func (p *exampleProvider) Configure(ctx context.Context, req provider.ConfigureR
 	}
 }
 
-func (p *exampleProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "example"
+func (p *playgroundProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "playground"
 }
 
-func (p *exampleProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+func (p *playgroundProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewDataSource,
 	}
 }
 
-func (p *exampleProvider) Resources(ctx context.Context) []func() resource.Resource {
+func (p *playgroundProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewResource,
 	}
 }
 
-func (p *exampleProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *playgroundProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"configurable_attribute": schema.StringAttribute{

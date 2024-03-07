@@ -12,11 +12,11 @@ import (
 // CLI command executed to create a provider server to which the CLI can
 // reattach.
 var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
-	"example": providerserver.NewProtocol6WithError(New()()),
+	"playground": providerserver.NewProtocol6WithError(New()()),
 }
 
 func testAccPreCheck(t *testing.T) {
-	// You can add code here to run prior to any test case execution, for example assertions
+	// You can add code here to run prior to any test case execution, for playground assertions
 	// about the appropriate environment variables being set are common to see in a pre-check
 	// function.
 }

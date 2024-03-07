@@ -1,7 +1,7 @@
 *.dll
 *.exe
 .DS_Store
-example.tf
+playground.tf
 terraform.tfplan
 terraform.tfstate
 bin/

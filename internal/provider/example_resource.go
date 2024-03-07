@@ -12,21 +12,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-var _ resource.Resource = (*exampleResource)(nil)
-var _ resource.ResourceWithImportState = (*exampleResource)(nil)
+var _ resource.Resource = (*playgroundResource)(nil)
+var _ resource.ResourceWithImportState = (*playgroundResource)(nil)
 
-type exampleResource struct {
+type playgroundResource struct {
 }
 
 func NewResource() resource.Resource {
-	return &exampleResource{}
+	return &playgroundResource{}
 }
 
-func (e *exampleResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (e *playgroundResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_resource"
 }
 
-func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (e *playgroundResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"configurable_attribute": schema.StringAttribute{
@@ -45,13 +45,13 @@ func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest
 	}
 }
 
-type exampleResourceData struct {
+type playgroundResourceData struct {
 	ConfigurableAttribute types.String `tfsdk:"configurable_attribute"`
 	Id                    types.String `tfsdk:"id"`
 }
 
-func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data exampleResourceData
+func (e *playgroundResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data playgroundResourceData
 
 	diags := req.Plan.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -72,8 +72,8 @@ func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 	resp.Diagnostics.Append(diags...)
 }
 
-func (e *exampleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data exampleResourceData
+func (e *playgroundResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data playgroundResourceData
 
 	diags := req.State.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -90,8 +90,8 @@ func (e *exampleResource) Read(ctx context.Context, req resource.ReadRequest, re
 	resp.Diagnostics.Append(diags...)
 }
 
-func (e *exampleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data exampleResourceData
+func (e *playgroundResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data playgroundResourceData
 
 	diags := req.Plan.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -104,8 +104,8 @@ func (e *exampleResource) Update(ctx context.Context, req resource.UpdateRequest
 	resp.Diagnostics.Append(diags...)
 }
 
-func (e *exampleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data exampleResourceData
+func (e *playgroundResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data playgroundResourceData
 
 	diags := req.State.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -115,6 +115,6 @@ func (e *exampleResource) Delete(ctx context.Context, req resource.DeleteRequest
 	}
 }
 
-func (e *exampleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (e *playgroundResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

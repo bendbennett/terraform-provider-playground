@@ -15,7 +15,7 @@ func TestAccExampleDataSource(t *testing.T) {
 			{
 				Config: testAccExampleDataSourceConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.example_datasource.test", "id", "example-id"),
+					resource.TestCheckResourceAttr("data.playground_datasource.test", "id", "example-id"),
 				),
 			},
 		},
@@ -23,7 +23,7 @@ func TestAccExampleDataSource(t *testing.T) {
 }
 
 const testAccExampleDataSourceConfig = `
-data "example_datasource" "test" {
-  configurable_attribute = "example"
+data "playground_datasource" "test" {
+  configurable_attribute = "example-id"
 }
 `
