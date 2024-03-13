@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -132,7 +133,8 @@ func (e *exampleResource) ImportState(ctx context.Context, req resource.ImportSt
 
 /************ CustomStringType *************/
 // Ensure the implementation satisfies the expected interfaces
-//var _ validation.String = CustomStringType{}
+var _ validation.StringAttributeWithValidate = CustomStringType{}
+var _ validation.StringParameterWithValidate = CustomStringType{}
 
 type CustomStringType struct {
 	basetypes.StringType
@@ -153,75 +155,37 @@ func (t CustomStringType) String() string {
 	return "CustomStringType"
 }
 
-func (t CustomStringType) ValidateString(ctx context.Context, req validation.StringRequest, resp *validation.StringResponse) {
+func (t CustomStringType) ValidateStringAttribute(ctx context.Context, req validation.ValidateStringAttributeRequest, resp *validation.ValidateStringAttributeResponse) {
 	if req.Value.IsNull() || req.Value.IsUnknown() {
 		return
 	}
 
-	if req.Value.ValueString() != "some-value" {
-		switch {
-		case req.Path.Steps() == nil || len(req.Path.Steps()) == 0:
-			resp.Diagnostics.AddAttributeError(
+	if !t.isValid(req.Value.ValueString()) {
+		resp.Diagnostics.Append(
+			diag.NewAttributeErrorDiagnostic(
 				req.Path,
 				"Invalid String Value",
-				fmt.Sprintf(`ValidateString: supplied string does not equal "some-value"`),
-			)
-
-			return
-		//case req.Position != nil:
-		//	resp.Diagnostics.AddArgumentError(
-		//		*req.Position,
-		//		"Invalid String Value",
-		//		`ValidateString: supplied string does not equal "some-value"`,
-		//	)
-		default:
-			resp.Diagnostics.AddError(
-				"Invalid String Value",
-				`ValidateString: supplied string does not equal "some-value"`,
-			)
-		}
+				fmt.Sprintf("%q does not equal %q", req.Value.ValueString(), "some-value"),
+			),
+		)
 	}
 }
 
-//func (t CustomStringType) Validate(ctx context.Context, tfValue tftypes.Value, path path.Path) diag.Diagnostics {
-//	var diags diag.Diagnostics
-//
-//	if !tfValue.Type().Equal(tftypes.String) {
-//		diags.AddAttributeError(
-//			path,
-//			"Compute Instance Type Validation Error",
-//			fmt.Sprintf("Expected String value, received %T with value: %v", tfValue, tfValue),
-//		)
-//		return diags
-//	}
-//
-//	if !tfValue.IsKnown() || tfValue.IsNull() {
-//		return diags
-//	}
-//
-//	var value string
-//	err := tfValue.As(&value)
-//
-//	if err != nil {
-//		diags.AddAttributeError(
-//			path,
-//			"Compute Instance Type Validation Error",
-//			fmt.Sprintf("Cannot convert value to string: %s", err),
-//		)
-//		return diags
-//	}
-//
-//	if !strings.HasPrefix(value, "some-value") {
-//		diags.AddAttributeError(
-//			path,
-//			"Compute Instance Type Validation Error",
-//			fmt.Sprintf("String is not `some-value`, got: %s", value),
-//		)
-//		return diags
-//	}
-//
-//	return nil
-//}
+func (t CustomStringType) ValidateStringParameter(ctx context.Context, req validation.ValidateStringParameterRequest, resp *validation.ValidateStringParameterResponse) {
+	if req.Value.IsNull() || req.Value.IsUnknown() {
+		return
+	}
+
+	if !t.isValid(req.Value.ValueString()) {
+		resp.Error = function.NewArgumentFuncError(
+			req.Position,
+			fmt.Sprintf("Invalid String Value: value %q does not equal %q", req.Value.ValueString(), "some-value"))
+	}
+}
+
+func (t CustomStringType) isValid(in string) bool {
+	return in == "some-value"
+}
 
 func (t CustomStringType) ValueFromString(ctx context.Context, in basetypes.StringValue) (basetypes.StringValuable, diag.Diagnostics) {
 	// CustomStringValue defined in the value type section
