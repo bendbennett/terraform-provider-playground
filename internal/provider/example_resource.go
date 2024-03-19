@@ -133,8 +133,7 @@ func (e *exampleResource) ImportState(ctx context.Context, req resource.ImportSt
 
 /************ CustomStringType *************/
 // Ensure the implementation satisfies the expected interfaces
-var _ validation.StringAttributeWithValidate = CustomStringType{}
-var _ validation.StringParameterWithValidate = CustomStringType{}
+var _ basetypes.StringTypable = CustomStringType{}
 
 type CustomStringType struct {
 	basetypes.StringType
@@ -153,38 +152,6 @@ func (t CustomStringType) Equal(o attr.Type) bool {
 
 func (t CustomStringType) String() string {
 	return "CustomStringType"
-}
-
-func (t CustomStringType) ValidateStringAttribute(ctx context.Context, req validation.ValidateStringAttributeRequest, resp *validation.ValidateStringAttributeResponse) {
-	if req.Value.IsNull() || req.Value.IsUnknown() {
-		return
-	}
-
-	if !t.isValid(req.Value.ValueString()) {
-		resp.Diagnostics.Append(
-			diag.NewAttributeErrorDiagnostic(
-				req.Path,
-				"Invalid String Value",
-				fmt.Sprintf("%q does not equal %q", req.Value.ValueString(), "some-value"),
-			),
-		)
-	}
-}
-
-func (t CustomStringType) ValidateStringParameter(ctx context.Context, req validation.ValidateStringParameterRequest, resp *validation.ValidateStringParameterResponse) {
-	if req.Value.IsNull() || req.Value.IsUnknown() {
-		return
-	}
-
-	if !t.isValid(req.Value.ValueString()) {
-		resp.Error = function.NewArgumentFuncError(
-			req.Position,
-			fmt.Sprintf("Invalid String Value: value %q does not equal %q", req.Value.ValueString(), "some-value"))
-	}
-}
-
-func (t CustomStringType) isValid(in string) bool {
-	return in == "some-value"
 }
 
 func (t CustomStringType) ValueFromString(ctx context.Context, in basetypes.StringValue) (basetypes.StringValuable, diag.Diagnostics) {
@@ -226,6 +193,8 @@ func (t CustomStringType) ValueType(ctx context.Context) attr.Value {
 /************ CustomStringValue *************/
 // Ensure the implementation satisfies the expected interfaces
 var _ basetypes.StringValuable = CustomStringValue{}
+var _ validation.StringAttributeWithValidate = CustomStringValue{}
+var _ validation.StringParameterWithValidate = CustomStringValue{}
 
 type CustomStringValue struct {
 	basetypes.StringValue
@@ -245,4 +214,36 @@ func (v CustomStringValue) Equal(o attr.Value) bool {
 func (v CustomStringValue) Type(ctx context.Context) attr.Type {
 	// CustomStringType defined in the schema type section
 	return CustomStringType{}
+}
+
+func (v CustomStringValue) ValidateAttribute(ctx context.Context, req validation.ValidateAttributeRequest, resp *validation.ValidateAttributeResponse) {
+	if v.IsNull() || v.IsUnknown() {
+		return
+	}
+
+	if !v.isValid(v.ValueString()) {
+		resp.Diagnostics.Append(
+			diag.NewAttributeErrorDiagnostic(
+				req.Path,
+				"Invalid String Value",
+				fmt.Sprintf("value %q length does not equal %d", v.ValueString(), 10),
+			),
+		)
+	}
+}
+
+func (v CustomStringValue) ValidateParameter(ctx context.Context, req validation.ValidateParameterRequest, resp *validation.ValidateParameterResponse) {
+	if v.IsNull() || v.IsUnknown() {
+		return
+	}
+
+	if !v.isValid(v.ValueString()) {
+		resp.Error = function.NewArgumentFuncError(
+			req.Position,
+			fmt.Sprintf("Invalid String Value: value %q length does not equal %d", v.ValueString(), 10))
+	}
+}
+
+func (v CustomStringValue) isValid(in string) bool {
+	return len(in) == 10
 }
