@@ -7,7 +7,7 @@ terraform {
 }
 
 resource "example_resource" "example" {
-  configurable_attribute = provider::example::function("some-valuess")
+  configurable_attribute = provider::example::function("some-value")
 }
 
 #output "test" {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/attr/xattr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -193,8 +194,8 @@ func (t CustomStringType) ValueType(ctx context.Context) attr.Value {
 /************ CustomStringValue *************/
 // Ensure the implementation satisfies the expected interfaces
 var _ basetypes.StringValuable = CustomStringValue{}
-var _ validation.StringAttributeWithValidate = CustomStringValue{}
-var _ validation.StringParameterWithValidate = CustomStringValue{}
+var _ xattr.ValidateableAttribute = CustomStringValue{}
+var _ validation.ValidateableParameter = CustomStringValue{}
 
 type CustomStringValue struct {
 	basetypes.StringValue
@@ -216,19 +217,19 @@ func (v CustomStringValue) Type(ctx context.Context) attr.Type {
 	return CustomStringType{}
 }
 
-func (v CustomStringValue) ValidateAttribute(ctx context.Context, req validation.ValidateAttributeRequest, resp *validation.ValidateAttributeResponse) {
+func (v CustomStringValue) ValidateAttribute(ctx context.Context, req xattr.ValidateAttributeRequest, resp *xattr.ValidateAttributeResponse) {
 	if v.IsNull() || v.IsUnknown() {
 		return
 	}
 
 	if !v.isValid(v.ValueString()) {
-		resp.Diagnostics.Append(
-			diag.NewAttributeErrorDiagnostic(
-				req.Path,
-				"Invalid String Value",
-				fmt.Sprintf("value %q length does not equal %d", v.ValueString(), 10),
-			),
+		resp.Diagnostics.AddAttributeError(
+			req.Path,
+			"Invalid String Value",
+			fmt.Sprintf("value %q length does not equal %d", v.ValueString(), 10),
 		)
+
+		return
 	}
 }
 

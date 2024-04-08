@@ -23,6 +23,7 @@ func (f ExampleFunction) Definition(ctx context.Context, req function.Definition
 		Parameters: []function.Parameter{
 			function.StringParameter{
 				CustomType: CustomStringType{},
+				Name:       "arg0",
 			},
 		},
 		Return: function.StringReturn{},
