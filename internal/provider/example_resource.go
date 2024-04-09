@@ -15,7 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"github.com/hashicorp/terraform-plugin-framework/types/validation"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -195,7 +194,7 @@ func (t CustomStringType) ValueType(ctx context.Context) attr.Value {
 // Ensure the implementation satisfies the expected interfaces
 var _ basetypes.StringValuable = CustomStringValue{}
 var _ xattr.ValidateableAttribute = CustomStringValue{}
-var _ validation.ValidateableParameter = CustomStringValue{}
+var _ function.ValidateableParameter = CustomStringValue{}
 
 type CustomStringValue struct {
 	basetypes.StringValue
@@ -233,7 +232,7 @@ func (v CustomStringValue) ValidateAttribute(ctx context.Context, req xattr.Vali
 	}
 }
 
-func (v CustomStringValue) ValidateParameter(ctx context.Context, req validation.ValidateParameterRequest, resp *validation.ValidateParameterResponse) {
+func (v CustomStringValue) ValidateParameter(ctx context.Context, req function.ValidateParameterRequest, resp *function.ValidateParameterResponse) {
 	if v.IsNull() || v.IsUnknown() {
 		return
 	}
