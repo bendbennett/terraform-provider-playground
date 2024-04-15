@@ -12,12 +12,6 @@ func Provider() *schema.Provider {
 
 func New() func() *schema.Provider {
 	return func() *schema.Provider {
-		p := &schema.Provider{
-			ResourcesMap: map[string]*schema.Resource{
-				"playground_example": exampleSdkResource(),
-			},
-		}
-
-		return p
+		return Provider()
 	}
 }

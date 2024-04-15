@@ -64,23 +64,23 @@ func exampleSdkResource() *schema.Resource {
 	}
 }
 
-type MutualAuthenticationAttributes struct {
-	_ struct{} `type:"structure"`
-
-	// Indicates whether expired client certificates are ignored.
-	IgnoreClientCertificateExpiry *bool `type:"boolean"`
-
-	// The client certificate handling method. Options are off, passthrough or verify.
-	// The default value is off.
-	Mode *string `type:"string"`
-
-	// The Amazon Resource Name (ARN) of the trust store.
-	TrustStoreArn *string `type:"string"`
-}
-
-func Pointer[T any](in T) *T {
-	return &in
-}
+//type MutualAuthenticationAttributes struct {
+//	_ struct{} `type:"structure"`
+//
+//	// Indicates whether expired client certificates are ignored.
+//	IgnoreClientCertificateExpiry *bool `type:"boolean"`
+//
+//	// The client certificate handling method. Options are off, passthrough or verify.
+//	// The default value is off.
+//	Mode *string `type:"string"`
+//
+//	// The Amazon Resource Name (ARN) of the trust store.
+//	TrustStoreArn *string `type:"string"`
+//}
+//
+//func Pointer[T any](in T) *T {
+//	return &in
+//}
 
 func create(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	d.SetId("example-id")
