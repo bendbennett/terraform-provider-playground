@@ -1,11 +1,11 @@
 terraform {
   required_providers {
-    example = {
+    playground = {
       source = "bendbennett/playground"
     }
   }
 }
 
-data "example_datasource" "example" {
+data "playground_datasource" "example" {
   configurable_attribute = "some-value"
 }

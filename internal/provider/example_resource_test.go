@@ -16,13 +16,13 @@ func TestAccExampleResource(t *testing.T) {
 			{
 				Config: testAccExampleResourceConfig("one"),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("example_resource.test", "configurable_attribute", "one"),
-					resource.TestCheckResourceAttr("example_resource.test", "id", "example-id"),
+					resource.TestCheckResourceAttr("playground_resource.test", "configurable_attribute", "one"),
+					resource.TestCheckResourceAttr("playground_resource.test", "id", "example-id"),
 				),
 			},
 			// ImportState testing
 			{
-				ResourceName:      "example_resource.test",
+				ResourceName:      "playground_resource.test",
 				ImportState:       true,
 				ImportStateVerify: true,
 				// This is not normally necessary, but is here because this
@@ -35,7 +35,7 @@ func TestAccExampleResource(t *testing.T) {
 			{
 				Config: testAccExampleResourceConfig("two"),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("example_resource.test", "configurable_attribute", "two"),
+					resource.TestCheckResourceAttr("playground_resource.test", "configurable_attribute", "two"),
 				),
 			},
 			// Delete testing automatically occurs in TestCase
@@ -45,7 +45,7 @@ func TestAccExampleResource(t *testing.T) {
 
 func testAccExampleResourceConfig(configurableAttribute string) string {
 	return fmt.Sprintf(`
-resource "example_resource" "test" {
+resource "playground_resource" "test" {
   configurable_attribute = %[1]q
 }
 `, configurableAttribute)
