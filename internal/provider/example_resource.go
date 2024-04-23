@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -13,17 +14,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-var _ resource.Resource = (*exampleResource)(nil)
+var _ resource.Resource = (*playgroundResource)(nil)
+var _ resource.ResourceWithImportState = (*playgroundResource)(nil)
 
-type exampleResource struct {
-	provider exampleProvider
+type playgroundResource struct {
 }
 
 func NewResource() resource.Resource {
-	return &exampleResource{}
+	return &playgroundResource{}
 }
 
-func (e *exampleResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (e *playgroundResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_resource"
 }
 
@@ -48,7 +49,7 @@ func (c CustomListValue) DoSomething(ctx context.Context) {
 	tflog.Info(ctx, "called DoSomething on CustomListValue")
 }
 
-func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (e *playgroundResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -310,7 +311,7 @@ func (e *exampleResource) Schema(ctx context.Context, req resource.SchemaRequest
 	}
 }
 
-type exampleResourceData struct {
+type playgroundResourceData struct {
 	Id types.String `tfsdk:"id"`
 
 	// Simple/primitive attributes
@@ -336,9 +337,8 @@ type exampleResourceData struct {
 	SingleNestedBlock types.Object    `tfsdk:"single_nested_block"`
 }
 
-// Create is unmarshalling the config onto exampleResourceData and persisting to the state.
-func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data exampleResourceData
+func (e *playgroundResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data playgroundResourceData
 
 	diags := req.Plan.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -359,8 +359,8 @@ func (e *exampleResource) Create(ctx context.Context, req resource.CreateRequest
 
 // Read is returning the contents of the state for this resource and the State field within resource.ReadResponse
 // is pre-populated so no action is required in this function.
-func (e *exampleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data exampleResourceData
+func (e *playgroundResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data playgroundResourceData
 
 	diags := req.State.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -375,8 +375,8 @@ func (e *exampleResource) Read(ctx context.Context, req resource.ReadRequest, re
 
 // Update overwrites the state with the plan. This is required in order that optional attributes in the config
 // are updated in place.
-func (e *exampleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data exampleResourceData
+func (e *playgroundResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data playgroundResourceData
 
 	diags := req.Plan.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -391,5 +391,17 @@ func (e *exampleResource) Update(ctx context.Context, req resource.UpdateRequest
 
 // Delete is automatically handled by the Framework which sets an empty state. This function does not need to
 // be populated unless additional handling needs to be implemented over and above setting an empty state.
-func (e *exampleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (e *playgroundResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data playgroundResourceData
+
+	diags := req.State.Get(ctx, &data)
+	resp.Diagnostics.Append(diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+}
+
+func (e *playgroundResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

@@ -9,21 +9,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSource = (*exampleDataSource)(nil)
+var _ datasource.DataSource = (*playgroundDataSource)(nil)
 
-type exampleDataSource struct {
-	provider exampleProvider
+type playgroundDataSource struct {
 }
 
 func NewDataSource() datasource.DataSource {
-	return &exampleDataSource{}
+	return &playgroundDataSource{}
 }
 
-func (e *exampleDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (e *playgroundDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_datasource"
 }
 
-func (e *exampleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (e *playgroundDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -153,7 +152,6 @@ func (e *exampleDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 			},
 		},
 
-
 		// Nested Blocks
 		Blocks: map[string]schema.Block{
 			"list_nested_block": schema.ListNestedBlock{
@@ -245,7 +243,7 @@ func (e *exampleDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 	}
 }
 
-type exampleDataSourceData struct {
+type playgroundDataSourceData struct {
 	Id types.String `tfsdk:"id"`
 
 	BoolAttribute    types.Bool    `tfsdk:"bool_attribute"`
@@ -270,8 +268,8 @@ type exampleDataSourceData struct {
 	SingleNestedBlock types.Object `tfsdk:"single_nested_block"`
 }
 
-func (e *exampleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data exampleDataSourceData
+func (e *playgroundDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data playgroundDataSourceData
 
 	diags := req.Config.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)

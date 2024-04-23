@@ -1,12 +1,12 @@
 terraform {
   required_providers {
-    example = {
+    playground = {
       source = "bendbennett/playground"
     }
   }
 }
 
-data "example_datasource" "example" {
+data "playground_datasource" "example" {
   // Simple/primitive attributes.
   bool_attribute = true
 

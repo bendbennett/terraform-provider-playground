@@ -15,13 +15,13 @@ description: |-
 ```terraform
 terraform {
   required_providers {
-    example = {
+    playground = {
       source = "bendbennett/playground"
     }
   }
 }
 
-provider "example" {
+provider "playground" {
   // Simple/primitive attributes.
   bool_attribute = true
 

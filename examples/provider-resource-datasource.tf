@@ -1,12 +1,12 @@
 terraform {
   required_providers {
-    example = {
+    playground = {
       source = "bendbennett/playground"
     }
   }
 }
 
-provider "example" {
+provider "playground" {
   // Simple/primitive attributes.
   bool_attribute = true
 
@@ -186,7 +186,7 @@ provider "example" {
   }
 }
 
-resource "example_resource" "example" {
+resource "playground_resource" "example" {
   // Simple/primitive attributes.
   bool_attribute = true
 
@@ -367,7 +367,7 @@ resource "example_resource" "example" {
   }
 }
 
-data "example_datasource" "example" {
+data "playground_datasource" "example" {
   // Simple/primitive attributes.
   bool_attribute = true
 
