@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
@@ -49,4 +50,34 @@ resource "playground_resource" "test" {
   configurable_attribute = %[1]q
 }
 `, configurableAttribute)
+}
+
+func TestAccExampleResourceSimple(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { testAccPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Config:                   testAccExampleResourceConfig("one"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("playground_resource.test", "configurable_attribute", "one"),
+					resource.TestCheckResourceAttr("playground_resource.test", "id", "example-id"),
+				),
+			},
+		},
+	})
+}
+
+func TestTest_ConfigDirectory_TestNameDirectory(t *testing.T) {
+	t.Parallel()
+
+	resource.Test(t, resource.TestCase{
+		Steps: []resource.TestStep{
+			{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				ConfigDirectory:          config.TestNameDirectory(),
+				Check:                    resource.TestCheckResourceAttrSet("random_string.test", "id"),
+			},
+		},
+	})
 }
